@@ -12,6 +12,14 @@ class_name Compass
 ## The arrow's rotation is computed directly from world-space positions and
 ## never reads Boat's own rotation, so "does not rotate with the boat" is
 ## true by construction rather than something separately compensated for.
+##
+## _target is re-resolved from the "active_target" group whenever the
+## cached reference goes stale (Pass 8: GameDirector frees the caught
+## Target and spawns a fresh one on the same group, which Compass has no
+## other way of learning about) — a cheap is_instance_valid() check most
+## frames, only falling back to an actual group search on the frame right
+## after a catch, so this still isn't a per-frame scene search in the
+## steady state.
 
 ## Distance in pixels from the compass's center that the arrow orbits at —
 ## GameDesign.md §15: "An arrow rotates around the center." Purely a visual
@@ -40,7 +48,11 @@ func _resolve_dependencies() -> void:
 
 
 func _process(_delta: float) -> void:
-	if not _boat or not _target:
+	if not _boat:
+		return
+	if not is_instance_valid(_target):
+		_target = get_tree().get_first_node_in_group("active_target")
+	if not _target:
 		return
 
 	var to_target := _target.global_position - _boat.global_position

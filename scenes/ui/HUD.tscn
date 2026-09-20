@@ -47,3 +47,23 @@ offset_right = 327.0
 offset_bottom = 52.0
 theme_override_font_sizes/font_size = 24
 text = "Timer: --:--"
+
+[node name="FeedPromptLabel" type="Label" parent="." unique_id=102690976]
+layout_mode = 0
+offset_left = 760.0
+offset_top = 850.0
+offset_right = 1160.0
+offset_bottom = 884.0
+theme_override_font_sizes/font_size = 32
+text = "Press E to Feed"
+horizontal_alignment = 1
+
+[node name="SliceCompleteLabel" type="Label" parent="." unique_id=742432828]
+layout_mode = 0
+offset_left = 660.0
+offset_top = 460.0
+offset_right = 1260.0
+offset_bottom = 520.0
+theme_override_font_sizes/font_size = 56
+text = "SLICE COMPLETE"
+horizontal_alignment = 1

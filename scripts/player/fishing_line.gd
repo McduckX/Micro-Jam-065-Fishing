@@ -86,6 +86,7 @@ var _ring_tween: Tween
 
 
 func _ready() -> void:
+	add_to_group("fishing_line")
 	_dangling_bait.visible = false
 	_hook_indicator.visible = false
 	_hook_indicator.scale = Vector2.ONE * hook_ring_idle_scale
@@ -253,6 +254,14 @@ func _update_cursor() -> void:
 ## Read by Target while APPROACHING to know where to close in on.
 func get_hook_position() -> Vector2:
 	return _hook_position
+
+
+## Called by GameDirector once a rhythm attempt against this line's target
+## has resolved (catch or failure) — Pass 7 left the line/hook held after a
+## result since nothing consumed it yet; Pass 8 always resolves something,
+## so there's nothing left to hold for.
+func force_clear() -> void:
+	_clear_line()
 
 
 ## Called by Target as it crosses into/out of its hook_radius around the

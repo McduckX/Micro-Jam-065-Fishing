@@ -53,6 +53,7 @@ signal died
 var speed: float = 0.0  ## signed: positive forward, negative reverse
 var _control_mode: ControlMode.Mode = ControlMode.Mode.STEERING
 var _whirlpool: Whirlpool
+var _director: Node
 var _is_dead: bool = false
 
 
@@ -83,11 +84,11 @@ func _ready() -> void:
 
 
 func _resolve_dependencies() -> void:
-	var director := get_tree().get_first_node_in_group("game_director")
-	if director:
-		_control_mode = director.control_mode
-		director.control_mode_changed.connect(_on_control_mode_changed)
-		died.connect(director.handle_boat_died)
+	_director = get_tree().get_first_node_in_group("game_director")
+	if _director:
+		_control_mode = _director.control_mode
+		_director.control_mode_changed.connect(_on_control_mode_changed)
+		died.connect(_director.handle_boat_died)
 	else:
 		push_warning("Boat: no node in group 'game_director' found; defaulting to STEERING.")
 
@@ -147,8 +148,15 @@ func _physics_process(delta: float) -> void:
 	if _is_touching_land():
 		_decay_speed_toward_zero(delta, land_friction_deceleration)
 
+	# GameDesign.md §16: carrying the correct food at the lethal core is a
+	# successful delivery, not a death — GameDirector is the sole authority
+	# on bait/feed state, so Boat only asks the yes/no question and never
+	# decides this itself. try_auto_feed() returns false (leaving _die() to
+	# fire) whenever the chain isn't complete, which is also how "wrong food
+	# is never automatically accepted" falls out — see run_state.gd.
 	if _whirlpool and _whirlpool.is_within_lethal_radius(global_position):
-		_die()
+		if not (_director and _director.try_auto_feed()):
+			_die()
 
 
 func _die() -> void:

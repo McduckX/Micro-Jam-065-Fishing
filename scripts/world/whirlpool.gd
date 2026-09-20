@@ -26,6 +26,11 @@ class_name Whirlpool
 ## Distance from centre beyond which the current has zero effect — the
 ## outer edge of the whirlpool's influence.
 @export var current_radius: float = 900.0
+## Distance from centre within which the "Press E to Feed" prompt can
+## appear — GameDesign.md §16's "normal feeding," a safer alternative to
+## risking lethal_radius for the automatic-feeding exception. Deliberately
+## larger than lethal_radius so the prompt is reachable without dying.
+@export var feed_radius: float = 180.0
 
 @export_group("Strength")
 ## Inward pull speed (units/sec) reached at lethal_radius; ramps down to 0
@@ -63,3 +68,7 @@ func get_current_force(global_pos: Vector2) -> Vector2:
 
 func is_within_lethal_radius(global_pos: Vector2) -> bool:
 	return global_position.distance_to(global_pos) <= lethal_radius
+
+
+func is_within_feed_radius(global_pos: Vector2) -> bool:
+	return global_position.distance_to(global_pos) <= feed_radius

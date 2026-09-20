@@ -4,8 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://d1hwlgxkosr0n" path="res://assets/temp/temp_whirlpool.png" id="2"]
 
 [node name="Whirlpool" type="Node2D" unique_id=1023178713]
-position = Vector2(2, 0)
 script = ExtResource("1")
+feed_radius = 300.0
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1989250587]
 texture = ExtResource("2")
