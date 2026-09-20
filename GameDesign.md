@@ -230,7 +230,7 @@ Starting bait: Bacon
 Bacon
 → Frying Pan
 → Bonfire
-→ Fire Hose
+→ Fire Hydrant
 → Doggy Bowl
 → Dog Treat
 → Scylla
