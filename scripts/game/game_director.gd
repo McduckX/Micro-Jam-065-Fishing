@@ -36,3 +36,18 @@ func _ready() -> void:
 func handle_boat_died() -> void:
 	print("GameDirector: boat died (placeholder) — whirlpool consumed the player.")
 	control_mode = ControlMode.Mode.LOCKED
+
+
+## FishingLine connects its own cast_started/line_cleared signals to these
+## two (same pattern as Boat.died above) rather than writing control_mode
+## itself, per Risk 4. handle_line_cleared() only reverts to STEERING if
+## control_mode is still LINE_ACTIVE, so it never clobbers a mode something
+## else set in the meantime (e.g. LOCKED from a death that happens to land
+## the same frame as a drift auto-cancel).
+func handle_line_cast_started() -> void:
+	control_mode = ControlMode.Mode.LINE_ACTIVE
+
+
+func handle_line_cleared() -> void:
+	if control_mode == ControlMode.Mode.LINE_ACTIVE:
+		control_mode = ControlMode.Mode.STEERING

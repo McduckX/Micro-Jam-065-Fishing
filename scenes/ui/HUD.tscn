@@ -4,12 +4,15 @@
 [ext_resource type="Script" uid="uid://cyg0poulrqnnv" path="res://scripts/ui/compass.gd" id="2"]
 [ext_resource type="Texture2D" uid="uid://dtyss50b1xnww" path="res://assets/temp/temp_compass_ring.png" id="3"]
 [ext_resource type="Texture2D" uid="uid://c8l6ovidr28t5" path="res://assets/temp/temp_compass_arrow.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://ccpkouly5aytf" path="res://assets/temp/temp_bait_icon.png" id="5"]
 
 [node name="HUD" type="Control" unique_id=344383103]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1")
 
@@ -25,18 +28,22 @@ texture = ExtResource("4")
 
 [node name="BaitLabel" type="Label" parent="." unique_id=1002303817]
 layout_mode = 0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 320.0
-offset_bottom = 44.0
-theme_override_font_sizes/font_size = 20
+offset_left = 147.0
+offset_top = 992.0
+offset_right = 447.0
+offset_bottom = 1026.0
+theme_override_font_sizes/font_size = 24
 text = "Bait: —"
+
+[node name="BaitIcon" type="Sprite2D" parent="." unique_id=-982788456]
+position = Vector2(75, 1002)
+texture = ExtResource("5")
 
 [node name="TimerLabel" type="Label" parent="." unique_id=762081885]
 layout_mode = 0
-offset_left = 20.0
-offset_top = 50.0
-offset_right = 320.0
-offset_bottom = 74.0
-theme_override_font_sizes/font_size = 20
+offset_left = 27.0
+offset_top = 24.0
+offset_right = 327.0
+offset_bottom = 52.0
+theme_override_font_sizes/font_size = 24
 text = "Timer: --:--"

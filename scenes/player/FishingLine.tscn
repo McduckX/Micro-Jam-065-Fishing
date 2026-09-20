@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://b1crykdecooia"]
+
+[ext_resource type="Script" uid="uid://c5jai2gutmti3" path="res://scripts/player/fishing_line.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://ccpkouly5aytf" path="res://assets/temp/temp_bait_icon.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://dfumtnms1r550" path="res://assets/temp/temp_hook_ring.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://cw651nnasi3ny" path="res://assets/temp/temp_cursor_defualt.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://bqxhua03js2s6" path="res://assets/temp/temp_cursor_cancel.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://owbg1b8k5m4b" path="res://assets/temp/temp_cursor_hookable.png" id="6"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hook"]
+radius = 76.02631
+
+[node name="FishingLine" type="Node2D" unique_id=1972474504]
+script = ExtResource("1")
+hook_ring_idle_scale = 1.0
+hook_ring_ready_scale = 1.5
+ring_tween_duration = 0.125
+cursor_default = ExtResource("4")
+cursor_cancel = ExtResource("5")
+cursor_hookable = ExtResource("6")
+
+[node name="Line2D" type="Line2D" parent="." unique_id=1501630674]
+width = 3.0
+
+[node name="DanglingBait" type="Sprite2D" parent="." unique_id=996575770]
+texture = ExtResource("2")
+
+[node name="HookIndicator" type="Sprite2D" parent="." unique_id=434983845]
+texture = ExtResource("3")
+
+[node name="HookArea" type="Area2D" parent="." unique_id=109975165]
+collision_layer = 32
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HookArea" unique_id=275289426]
+shape = SubResource("CircleShape2D_hook")

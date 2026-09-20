@@ -117,15 +117,14 @@
 8. Casting System
    The player may cast whenever they possess bait.
    Casting flow
-   The player positions the mouse within maximum casting range.
-   The selected position must be valid water.
-   The player clicks the left mouse button.
-   The current bait travels from the boat to the selected position.
+   The player clicks the left mouse button at any position; no cast is ever rejected.
+   If the clicked position is beyond maximum casting range, the cast clamps to maximum range in the clicked direction instead.
+   If the clamped position would land on land, the cast clamps further, landing just short of the shoreline instead — close enough to attract land-based targets toward the water.
+   The current bait travels from the boat to the resolved position.
    A line is rendered between the boat and bait.
    The bait reaches the destination and becomes concealed beneath the water.
    A hook indicator appears at the cast location.
    The line remains active until hooked, recalled, or automatically cancelled.
-   The player cannot cast onto land.
    Casting cancellation
    The player can recall an unhooked line by clicking again.
    The line is automatically recalled if the boat moves too far from the boat’s original casting position.
