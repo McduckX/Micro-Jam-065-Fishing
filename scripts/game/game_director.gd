@@ -10,7 +10,15 @@ extends Node
 ## fields are placeholders wired up starting Pass 8 (run_state.gd) and
 ## Pass 9 (CycleData resources).
 
+## Pass 7 scope: one hardcoded test phrase and mistake allowance, wired in
+## the inspector on Game.tscn's GameDirector node. Real per-target patterns
+## and mistake allowances (intermediate vs. final) arrive with chain data
+## in Pass 9.
+@export var test_rhythm_pattern: RhythmPattern
+@export var test_max_mistakes: int = 0
+
 signal control_mode_changed(new_mode: ControlMode.Mode)
+signal rhythm_requested(pattern: RhythmPattern, max_mistakes: int)
 
 var control_mode: ControlMode.Mode = ControlMode.Mode.STEERING:
 	set(value):
@@ -51,3 +59,26 @@ func handle_line_cast_started() -> void:
 func handle_line_cleared() -> void:
 	if control_mode == ControlMode.Mode.LINE_ACTIVE:
 		control_mode = ControlMode.Mode.STEERING
+
+
+## FishingLine connects its own hook_attempted signal to this once a target
+## is hookable and the player clicks (same pattern as above). RhythmUI
+## connects to the rhythm_requested signal this emits, rather than
+## GameDirector holding a direct reference to it, keeping the two decoupled
+## via signals like everything else in this architecture.
+func handle_hook_attempted() -> void:
+	if control_mode != ControlMode.Mode.LINE_ACTIVE:
+		return
+	control_mode = ControlMode.Mode.RHYTHM
+	rhythm_requested.emit(test_rhythm_pattern, test_max_mistakes)
+
+
+## RhythmUI connects its own sequence_finished signal to this. Pass 7
+## placeholder: prints the result and hands control back, same style as
+## handle_boat_died()'s placeholder print. Catching, bait replacement, and
+## the target's flee-on-failure behavior are explicitly Pass 8's job — the
+## line and target are left exactly as they were, still holding.
+func handle_rhythm_finished(success: bool) -> void:
+	print("GameDirector: rhythm sequence finished (placeholder) — success=%s" % success)
+	if control_mode == ControlMode.Mode.RHYTHM:
+		control_mode = ControlMode.Mode.LINE_ACTIVE

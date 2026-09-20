@@ -16,8 +16,9 @@ class_name FishingLine
 ## this pass: land is a barrier a cast bounces off of, not a rejected click —
 ## GameDesign.md §8 has been updated to match).
 ##
-## Clicking always recalls the line once one is out, even once a target is
-## hookable — the click-to-hook transition itself is Pass 7's job.
+## Clicking recalls the line unless a target is currently hookable, in which
+## case it emits hook_attempted instead (Pass 7). No cast input is processed
+## at all while control_mode is RHYTHM or LOCKED.
 
 enum State { IDLE, TRAVELING, SUBMERGED }
 
@@ -64,6 +65,7 @@ enum State { IDLE, TRAVELING, SUBMERGED }
 
 signal cast_started
 signal line_cleared
+signal hook_attempted
 
 @onready var _line_2d: Line2D = $Line2D
 @onready var _dangling_bait: Sprite2D = $DanglingBait
@@ -104,6 +106,7 @@ func _resolve_dependencies() -> void:
 		director.control_mode_changed.connect(_on_control_mode_changed)
 		cast_started.connect(director.handle_line_cast_started)
 		line_cleared.connect(director.handle_line_cleared)
+		hook_attempted.connect(director.handle_hook_attempted)
 	else:
 		push_warning("FishingLine: no node in group 'game_director' found; control mode will not update.")
 
@@ -115,8 +118,13 @@ func _on_control_mode_changed(new_mode: ControlMode.Mode) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_action_pressed("cast"):
 		return
+	if _control_mode == ControlMode.Mode.RHYTHM or _control_mode == ControlMode.Mode.LOCKED:
+		return  # a rhythm sequence owns input now; a stray click must not recall the line under it
+
 	if _state == State.IDLE:
 		_try_start_cast()
+	elif _state == State.SUBMERGED and _hook_ready:
+		hook_attempted.emit()
 	else:
 		_clear_line()
 
@@ -217,7 +225,10 @@ func _arrive_at_hook_position() -> void:
 func _process_submerged() -> void:
 	if not _boat:
 		return
-	if _boat.global_position.distance_to(_cast_origin) > max_drift_distance:
+	# Drift auto-cancel is suspended during a rhythm attempt — the boat may
+	# keep drifting under the current (GameDesign.md §10), but that must not
+	# yank the line out from under an in-progress sequence.
+	if _control_mode != ControlMode.Mode.RHYTHM and _boat.global_position.distance_to(_cast_origin) > max_drift_distance:
 		_clear_line()
 		return
 	_update_line()
@@ -247,13 +258,13 @@ func get_hook_position() -> Vector2:
 ## Called by Target as it crosses into/out of its hook_radius around the
 ## bait — see target.gd. Idempotent: repeated calls with the same value are
 ## a no-op so Target can call this every frame without retriggering the tween.
-func set_hook_ready(ready: bool) -> void:
-	if _hook_ready == ready:
+func set_hook_ready(is_ready: bool) -> void:
+	if _hook_ready == is_ready:
 		return
-	_hook_ready = ready
+	_hook_ready = is_ready
 	if _ring_tween:
 		_ring_tween.kill()
 	_ring_tween = create_tween()
-	var target_scale: float = hook_ring_ready_scale if ready else hook_ring_idle_scale
+	var target_scale: float = hook_ring_ready_scale if is_ready else hook_ring_idle_scale
 	_ring_tween.tween_property(_hook_indicator, "scale", Vector2.ONE * target_scale, ring_tween_duration)
 	_update_cursor()

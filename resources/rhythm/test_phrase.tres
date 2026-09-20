@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="RhythmPattern" format=3 uid="uid://7iwb62ctac6w"]
+
+[ext_resource type="Script" uid="uid://2po5dhekbuev" path="res://scripts/data/rhythm_pattern.gd" id="1"]
+[ext_resource type="Script" uid="uid://b012mn6lwtits" path="res://scripts/data/rhythm_note.gd" id="2"]
+
+[sub_resource type="Resource" id="Note_1"]
+script = ExtResource("2")
+time = 1.0
+
+[sub_resource type="Resource" id="Note_2"]
+script = ExtResource("2")
+action = "rhythm_left"
+time = 1.8
+
+[sub_resource type="Resource" id="Note_3"]
+script = ExtResource("2")
+action = "rhythm_down"
+time = 2.6
+
+[sub_resource type="Resource" id="Note_4"]
+script = ExtResource("2")
+action = "rhythm_right"
+time = 3.2
+is_hold = true
+hold_duration = 0.6
+
+[sub_resource type="Resource" id="Note_5"]
+script = ExtResource("2")
+time = 4.4
+
+[sub_resource type="Resource" id="Note_6"]
+script = ExtResource("2")
+action = "rhythm_down"
+time = 5.0
+
+[sub_resource type="Resource" id="Note_7"]
+script = ExtResource("2")
+action = "rhythm_left"
+time = 5.6
+is_hold = true
+hold_duration = 0.5
+
+[sub_resource type="Resource" id="Note_8"]
+script = ExtResource("2")
+action = "rhythm_right"
+time = 6.4
+
+[resource]
+script = ExtResource("1")
+notes = Array[ExtResource("2")]([SubResource("Note_1"), SubResource("Note_2"), SubResource("Note_3"), SubResource("Note_4"), SubResource("Note_5"), SubResource("Note_6"), SubResource("Note_7"), SubResource("Note_8")])
