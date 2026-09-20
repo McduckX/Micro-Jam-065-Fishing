@@ -11,10 +11,7 @@ class_name Target
 ## Pass 8 adds fleeing: on a failed hook attempt, GameDirector calls flee()
 ## directly (it already knows the outcome from RhythmUI.sequence_finished
 ## and already knows which target from the "active_target" group, so no
-## extra signal from Target is needed here). Losing the line without a
-## rhythm attempt (recall, drift auto-cancel) still just resumes the patrol
-## path at normal speed via the existing area_exited handling below — that
-## teleport-style pop is accepted for that case, but not for a flee (below).
+## extra signal from Target is needed here).
 ##
 ## Fleeing is three phases, not a straight line back onto the curve:
 ## FLEEING_AWAY (a brief burst directly away from the hook), RETURNING
@@ -26,6 +23,14 @@ class_name Target
 ## counted from the moment it actually rejoins the path, not from when it
 ## started fleeing — GameDesign.md §9's "returns to normal movement speed"
 ## happens at the end of that boost window, not at the end of the flee.
+##
+## Losing the line without a rhythm attempt (recall, drift auto-cancel,
+## wandering out of detection) shares the same RETURNING journey — it
+## reuses _begin_returning() too, just without the FLEEING_AWAY burst and
+## without the flee_speed_multiplier/flee_boost_duration afterward, since
+## nothing failed here. Either way the target travels back to the *closest*
+## point on its path rather than teleporting to wherever it originally left
+## from — see _return_to_patrol().
 ##
 ## Pass 9: every tunable (speed, radii, flee timing, rhythm phrase) now
 ## lives on the assigned TargetData resource instead of individual @exports
@@ -59,6 +64,7 @@ var _away_time_remaining: float = 0.0
 var _return_target: Vector2 = Vector2.ZERO
 var _return_offset: float = 0.0
 var _boost_time_remaining: float = 0.0
+var _returning_from_flee: bool = false  ## whether the post-return speed boost applies
 
 
 func _ready() -> void:
@@ -193,13 +199,17 @@ func _process_fleeing_away(delta: float) -> void:
 
 	_away_time_remaining -= delta
 	if _away_time_remaining <= 0.0:
-		_begin_returning()
+		_begin_returning(true)
 
 
 ## Finds the closest point on the patrol curve (not the offset the target
 ## originally left from) via Curve2D.get_closest_offset(), and heads there
 ## — see the class doc for why "closest," not "original," point.
-func _begin_returning() -> void:
+## `from_flee` gates whether the flee speed multiplier and the post-return
+## boost apply — a cancelled approach (recall, drift auto-cancel, wandering
+## out of detection) travels back at normal patrol_speed with no boost,
+## since nothing failed here; only an actual flee() gets the faster return.
+func _begin_returning(from_flee: bool) -> void:
 	if not _path:
 		_state = State.PATROL  # no path to return to; shouldn't normally happen
 		return
@@ -207,20 +217,23 @@ func _begin_returning() -> void:
 	var curve := _path.curve
 	_return_offset = curve.get_closest_offset(_path.to_local(global_position))
 	_return_target = _path.to_global(curve.sample_baked(_return_offset))
+	_returning_from_flee = from_flee
 	_state = State.RETURNING
 
 
 func _process_returning(delta: float) -> void:
+	var speed_multiplier := data.flee_speed_multiplier if _returning_from_flee else 1.0
 	var to_target := _return_target - global_position
 	var distance := to_target.length()
-	var step: float = data.patrol_speed * data.flee_speed_multiplier * delta
+	var step: float = data.patrol_speed * speed_multiplier * delta
 
 	if distance <= step:
 		# Snapping _offset here (rather than resuming from wherever it left
 		# off) is what makes PATROL continue in the correct direction — its
 		# own offset-forward walk does the rest.
 		_offset = _return_offset
-		_boost_time_remaining = data.flee_boost_duration
+		if _returning_from_flee:
+			_boost_time_remaining = data.flee_boost_duration
 		_state = State.PATROL
 		_update_transform()
 		return
@@ -269,13 +282,17 @@ func _on_area_exited(area: Area2D) -> void:
 	_return_to_patrol()
 
 
+## Called whenever an approach ends without a rhythm attempt ever starting
+## (line recalled/drift-cancelled while APPROACHING, or the target wanders
+## back out of detection on its own) — travels back to the closest point on
+## the patrol path (via _begin_returning()) rather than teleporting there.
 func _return_to_patrol() -> void:
 	if is_instance_valid(_line):
 		_line.set_hook_ready(false)
 	_line = null
 	_hookable_time_remaining = -1.0
 	_hookable_timeout_cancelled = false
-	_state = State.PATROL
+	_begin_returning(false)
 
 
 ## Samples the current offset (plus a small look-ahead offset for heading)

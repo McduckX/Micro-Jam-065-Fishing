@@ -61,7 +61,7 @@ offset_top = 460.0
 offset_right = 1260.0
 offset_bottom = 520.0
 theme_override_font_sizes/font_size = 56
-text = "SLICE COMPLETE"
+text = "CYCLE COMPLETE"
 horizontal_alignment = 1
 
 [node name="BaitDisplayPanel" type="TextureRect" parent="." unique_id=78670384]
@@ -85,3 +85,4 @@ offset_right = 83.0
 offset_bottom = 83.0
 grow_horizontal = 2
 grow_vertical = 2
+stretch_mode = 5

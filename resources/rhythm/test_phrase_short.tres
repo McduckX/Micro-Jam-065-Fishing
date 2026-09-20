@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="RhythmPattern" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="RhythmPattern" format=3 uid="uid://canfrfl1dtrep"]
 
-[ext_resource type="Script" path="res://scripts/data/rhythm_pattern.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/data/rhythm_note.gd" id="2"]
+[ext_resource type="Script" uid="uid://2po5dhekbuev" path="res://scripts/data/rhythm_pattern.gd" id="1"]
+[ext_resource type="Script" uid="uid://b012mn6lwtits" path="res://scripts/data/rhythm_note.gd" id="2"]
 
 [sub_resource type="Resource" id="Note_1"]
 script = ExtResource("2")
