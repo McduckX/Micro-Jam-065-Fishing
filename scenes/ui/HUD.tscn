@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://dtyss50b1xnww" path="res://assets/temp/temp_compass_ring.png" id="3"]
 [ext_resource type="Texture2D" uid="uid://c8l6ovidr28t5" path="res://assets/temp/temp_compass_arrow.png" id="4"]
 [ext_resource type="Texture2D" uid="uid://ccpkouly5aytf" path="res://assets/temp/temp_bait_icon.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://obykx73mk02q" path="res://assets/temp/temp_hud_bait_panel_background.png" id="6_rnyu1"]
 
 [node name="HUD" type="Control" unique_id=344383103]
 layout_mode = 3
@@ -28,15 +29,15 @@ texture = ExtResource("4")
 
 [node name="BaitLabel" type="Label" parent="." unique_id=1002303817]
 layout_mode = 0
-offset_left = 147.0
-offset_top = 992.0
-offset_right = 447.0
-offset_bottom = 1026.0
+offset_left = 202.0
+offset_top = 993.0
+offset_right = 502.0
+offset_bottom = 1027.0
 theme_override_font_sizes/font_size = 24
 text = "Bait: —"
 
 [node name="BaitIcon" type="Sprite2D" parent="." unique_id=-982788456]
-position = Vector2(75, 1002)
+position = Vector2(79, 851)
 texture = ExtResource("5")
 
 [node name="TimerLabel" type="Label" parent="." unique_id=762081885]
@@ -67,3 +68,25 @@ offset_bottom = 520.0
 theme_override_font_sizes/font_size = 56
 text = "SLICE COMPLETE"
 horizontal_alignment = 1
+
+[node name="BaitDisplayPanel" type="TextureRect" parent="." unique_id=78670384]
+layout_mode = 0
+offset_top = 914.0
+offset_right = 166.0
+offset_bottom = 1080.0
+texture = ExtResource("6_rnyu1")
+
+[node name="BaitIcon" type="TextureRect" parent="BaitDisplayPanel" unique_id=386463733]
+custom_minimum_size = Vector2(166, 166)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -83.0
+offset_top = -83.0
+offset_right = 83.0
+offset_bottom = 83.0
+grow_horizontal = 2
+grow_vertical = 2
