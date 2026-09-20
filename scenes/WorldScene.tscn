@@ -4,6 +4,25 @@
 [ext_resource type="PackedScene" uid="uid://bisiea6edsa0k" path="res://scenes/player/Boat.tscn" id="2_boat"]
 [ext_resource type="Script" uid="uid://dohribawximax" path="res://scripts/world/follow_camera.gd" id="3_cam"]
 [ext_resource type="PackedScene" uid="uid://cjkpjtvm7vsy" path="res://scenes/world/Whirlpool.tscn" id="4_whirlpool"]
+[ext_resource type="PackedScene" path="res://scenes/fish/Target.tscn" id="5_target"]
+
+[sub_resource type="Curve2D" id="Curve2D_patrol_a"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 1300, 200, 0, 0, 0, 0, 2000, 180, 0, 0, 0, 0, 2000, 420, 0, 0, 0, 0, 1300, 420, 0, 0, 0, 0, 1300, 200)
+}
+point_count = 5
+
+[sub_resource type="Curve2D" id="Curve2D_patrol_b"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 1500, 450, 0, 0, 0, 0, 2200, 150, 0, 0, 0, 0, 2900, 450, 0, 0, 0, 0, 1500, 450)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_patrol_c"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 1800, 300, 0, 0, 0, 0, 2100, 180, 0, 0, 0, 0, 2500, 180, 0, 0, 0, 0, 2800, 300, 0, 0, 0, 0, 2500, 420, 0, 0, 0, 0, 2100, 420, 0, 0, 0, 0, 1800, 300)
+}
+point_count = 7
 
 [node name="WorldScene" type="Node2D" unique_id=65008543]
 
@@ -23,6 +42,17 @@ polygon = PackedVector2Array(1650, 50, 1900, 50, 1900, 1065, 1650, 280)
 
 [node name="RegionTop" type="Node2D" parent="Regions" unique_id=1530564906]
 
+[node name="Paths" type="Node2D" parent="Regions/RegionTop"]
+
+[node name="PatrolLoopA" type="Path2D" parent="Regions/RegionTop/Paths"]
+curve = SubResource("Curve2D_patrol_a")
+
+[node name="PatrolLoopB" type="Path2D" parent="Regions/RegionTop/Paths"]
+curve = SubResource("Curve2D_patrol_b")
+
+[node name="PatrolLoopC" type="Path2D" parent="Regions/RegionTop/Paths"]
+curve = SubResource("Curve2D_patrol_c")
+
 [node name="RegionLeft" type="Node2D" parent="Regions" unique_id=2098905846]
 
 [node name="RegionBottom" type="Node2D" parent="Regions" unique_id=93040754]
@@ -39,6 +69,8 @@ position = Vector2(1900, 500)
 
 [node name="Whirlpool" parent="." unique_id=752153721 instance=ExtResource("4_whirlpool")]
 position = Vector2(1774, 1425)
+
+[node name="Target" parent="." instance=ExtResource("5_target")]
 
 [node name="GameCamera" type="Camera2D" parent="." unique_id=1650231830]
 position = Vector2(1900, 500)
