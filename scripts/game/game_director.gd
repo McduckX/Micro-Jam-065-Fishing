@@ -26,3 +26,13 @@ func _ready() -> void:
 	# director once at its own _ready() via get_first_node_in_group(), so
 	# the wiring survives scene restructuring without manual re-linking.
 	add_to_group("game_director")
+
+
+## Boat connects its own `died` signal to this once it finds this director
+## (same group-lookup pattern). Boat never writes control_mode itself —
+## this stays the single writer, per the Risk 4 mitigation in the plan.
+## Pass 3 scope: placeholder freeze + print only; a real death sequence
+## (Game Over screen, restart) arrives in Pass 13.
+func handle_boat_died() -> void:
+	print("GameDirector: boat died (placeholder) — whirlpool consumed the player.")
+	control_mode = ControlMode.Mode.LOCKED

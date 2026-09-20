@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://da0xvmqv1y2mt" path="res://assets/temp/Map_Canvas.png" id="1_y03mr"]
 [ext_resource type="PackedScene" uid="uid://bisiea6edsa0k" path="res://scenes/player/Boat.tscn" id="2_boat"]
 [ext_resource type="Script" uid="uid://dohribawximax" path="res://scripts/world/follow_camera.gd" id="3_cam"]
+[ext_resource type="PackedScene" uid="uid://cjkpjtvm7vsy" path="res://scenes/world/Whirlpool.tscn" id="4_whirlpool"]
 
 [node name="WorldScene" type="Node2D" unique_id=65008543]
 
@@ -15,7 +16,7 @@ collision_layer = 2
 collision_mask = 0
 
 [node name="TestShoreline" type="CollisionPolygon2D" parent="Land" unique_id=1239452864]
-position = Vector2(-16, 618)
+position = Vector2(-1188, 439)
 polygon = PackedVector2Array(1650, 50, 1900, 50, 1900, 1065, 1650, 280)
 
 [node name="Regions" type="Node2D" parent="." unique_id=735064491]
@@ -35,6 +36,9 @@ position = Vector2(1900, 500)
 
 [node name="Boat" parent="." unique_id=756749579 instance=ExtResource("2_boat")]
 position = Vector2(1900, 500)
+
+[node name="Whirlpool" parent="." unique_id=752153721 instance=ExtResource("4_whirlpool")]
+position = Vector2(1774, 1425)
 
 [node name="GameCamera" type="Camera2D" parent="." unique_id=1650231830]
 position = Vector2(1900, 500)
