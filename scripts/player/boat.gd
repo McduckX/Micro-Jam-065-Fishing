@@ -57,6 +57,8 @@ var _is_dead: bool = false
 
 
 func _ready() -> void:
+	add_to_group("boat")
+
 	# Floating, not Grounded: Grounded assumes an up-direction/floor/slope
 	# model built for platformers, which would fight a top-down boat with
 	# no gravity (see the Pass 2 pre-implementation check in the plan).
