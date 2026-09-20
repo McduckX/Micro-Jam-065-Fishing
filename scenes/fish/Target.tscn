@@ -1,7 +1,8 @@
-[gd_scene format=3 uid="uid://bqmvnltt2rqrb"]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" uid="uid://bxn62qxt0s0x2" path="res://scripts/fish/target.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://xo4hsiwxl34h" path="res://assets/temp/temp_fish.png" id="2"]
+[ext_resource type="Resource" path="res://resources/targets/salmon.tres" id="3"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_detection"]
 radius = 220.0
@@ -10,7 +11,7 @@ radius = 220.0
 collision_layer = 16
 collision_mask = 32
 script = ExtResource("1")
-hookable_timeout = 1.5
+data = ExtResource("3")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=473301062]
 texture = ExtResource("2")

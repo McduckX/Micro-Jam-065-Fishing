@@ -108,8 +108,20 @@ func _resolve_dependencies() -> void:
 		cast_started.connect(director.handle_line_cast_started)
 		line_cleared.connect(director.handle_line_cleared)
 		hook_attempted.connect(director.handle_hook_attempted)
+		# Closes a loop Pass 6's own vision left open: the dangling bait
+		# should show "the exact same texture that is shown on your HUD" —
+		# now that bait is real data instead of a static placeholder, this
+		# mirrors HUD's own bait_changed wiring exactly, including reading
+		# the starting value directly rather than the initial emit, since
+		# the two deferred resolutions have no guaranteed order.
+		director.bait_changed.connect(_on_bait_changed)
+		_on_bait_changed(director.run_state.current_bait)
 	else:
 		push_warning("FishingLine: no node in group 'game_director' found; control mode will not update.")
+
+
+func _on_bait_changed(bait: TargetData) -> void:
+	_dangling_bait.texture = bait.texture
 
 
 func _on_control_mode_changed(new_mode: ControlMode.Mode) -> void:

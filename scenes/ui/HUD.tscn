@@ -4,7 +4,6 @@
 [ext_resource type="Script" uid="uid://cyg0poulrqnnv" path="res://scripts/ui/compass.gd" id="2"]
 [ext_resource type="Texture2D" uid="uid://dtyss50b1xnww" path="res://assets/temp/temp_compass_ring.png" id="3"]
 [ext_resource type="Texture2D" uid="uid://c8l6ovidr28t5" path="res://assets/temp/temp_compass_arrow.png" id="4"]
-[ext_resource type="Texture2D" uid="uid://ccpkouly5aytf" path="res://assets/temp/temp_bait_icon.png" id="5"]
 [ext_resource type="Texture2D" uid="uid://obykx73mk02q" path="res://assets/temp/temp_hud_bait_panel_background.png" id="6_rnyu1"]
 
 [node name="HUD" type="Control" unique_id=344383103]
@@ -35,10 +34,6 @@ offset_right = 502.0
 offset_bottom = 1027.0
 theme_override_font_sizes/font_size = 24
 text = "Bait: —"
-
-[node name="BaitIcon" type="Sprite2D" parent="." unique_id=-982788456]
-position = Vector2(79, 851)
-texture = ExtResource("5")
 
 [node name="TimerLabel" type="Label" parent="." unique_id=762081885]
 layout_mode = 0

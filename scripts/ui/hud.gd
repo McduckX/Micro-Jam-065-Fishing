@@ -8,6 +8,7 @@ extends Control
 ## script of its own.
 
 @onready var _bait_label: Label = $BaitLabel
+@onready var _bait_icon: TextureRect = $BaitDisplayPanel/BaitIcon
 @onready var _feed_prompt_label: Label = $FeedPromptLabel
 @onready var _slice_complete_label: Label = $SliceCompleteLabel
 
@@ -36,8 +37,9 @@ func _resolve_dependencies() -> void:
 		push_warning("HUD: no node in group 'game_director' found; bait/feed readouts will not update.")
 
 
-func _on_bait_changed(bait_name: String) -> void:
-	_bait_label.text = "Bait: %s" % bait_name
+func _on_bait_changed(bait: TargetData) -> void:
+	_bait_label.text = "Bait: %s" % bait.display_name
+	_bait_icon.texture = bait.texture
 
 
 func _on_can_feed_changed(can_feed: bool) -> void:

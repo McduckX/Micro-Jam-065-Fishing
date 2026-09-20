@@ -27,6 +27,10 @@ class_name Target
 ## started fleeing — GameDesign.md §9's "returns to normal movement speed"
 ## happens at the end of that boost window, not at the end of the flee.
 ##
+## Pass 9: every tunable (speed, radii, flee timing, rhythm phrase) now
+## lives on the assigned TargetData resource instead of individual @exports
+## here — see data below and target_data.gd.
+##
 ## Looping: Curve2D has no "closed" property in Godot 4.7.2 (checked, not
 ## assumed), so the loop seam is handled by hand — the offset wraps via
 ## fmod(), and each authored path's first and last points are placed at the
@@ -34,40 +38,15 @@ class_name Target
 
 enum State { PATROL, APPROACHING, FLEEING_AWAY, RETURNING }
 
-@export_group("Patrol")
-## Units/sec the target advances along its assigned path's baked curve, and
-## also the speed it closes on the hook position while approaching.
-@export var patrol_speed: float = 150.0
+## Identity, tuning, and rhythm phrase for whichever creature this instance
+## represents — see target_data.gd. Must be set before this enters the
+## tree (GameDirector sets it right after instantiate(), before add_child()).
+@export var data: TargetData
 ## Region root (e.g. RegionTop) this target patrols within. Its "Paths"
-## child's Path2D children are the eligible routes — see PathRegistry.
+## child's Path2D children are the eligible routes — see PathRegistry. This
+## stays a Target-level scene default rather than TargetData, since it's
+## about scene structure (where to look), not creature identity.
 @export var region_path: NodePath = NodePath("../Regions/RegionTop")
-
-@export_group("Detection")
-## Radius within which a submerged bait is noticed — must match this node's
-## CollisionShape2D (a CircleShape2D) — see GameDesign.md §9 and §22.
-@export var detection_radius: float = 220.0
-## Distance from the hook position at which the target stops closing in and
-## is close enough to be hooked (Pass 7 wires the actual hook trigger).
-@export var hook_radius: float = 70.0
-## Seconds the target stays hookable before giving up and fleeing if the
-## player never starts a hook attempt — reuses the exact same flee() a
-## failed rhythm attempt triggers (see the Flee group below and
-## GameDirector.handle_hook_attempted(), which cancels this once a rhythm
-## sequence actually starts).
-@export var hookable_timeout: float = 3.0
-
-@export_group("Flee")
-## Multiplier on patrol_speed while fleeing after a failed hook attempt —
-## applies through FLEEING_AWAY, RETURNING, and the post-return boost below.
-## GameDesign.md §9: "moves away from the hook at an increased speed."
-@export var flee_speed_multiplier: float = 2.5
-## Seconds spent moving directly away from the hook position before turning
-## to head back toward the closest point on the patrol path.
-@export var flee_away_duration: float = 0.4
-## Seconds spent at the boosted speed AFTER rejoining the path, counted from
-## the moment it rejoins — not from when it started fleeing. This is where
-## GameDesign.md §9's "returns to normal movement speed" actually happens.
-@export var flee_boost_duration: float = 1.0
 
 var _path: Path2D
 var _offset: float = 0.0
@@ -86,6 +65,22 @@ func _ready() -> void:
 	add_to_group("active_target")
 	area_entered.connect(_on_area_entered)
 	area_exited.connect(_on_area_exited)
+
+	if not data:
+		push_warning("Target: no TargetData assigned; target will not move or be catchable.")
+		return
+
+	$Sprite2D.texture = data.texture
+
+	# Detection radius now varies per creature, so the shape is synced from
+	# data at runtime instead of being a hand-kept-in-sync magic number.
+	# Duplicated rather than mutated in place: harmless either way today
+	# (design guarantees only one Target is ever alive at once), but correct
+	# regardless of whether Godot happens to share the sub-resource across
+	# instantiate() calls.
+	var shape := ($CollisionShape2D.shape as CircleShape2D).duplicate() as CircleShape2D
+	shape.radius = data.detection_radius
+	$CollisionShape2D.shape = shape
 
 	var region := get_node_or_null(region_path) as Node2D
 	if not region:
@@ -122,9 +117,9 @@ func _process_patrol(delta: float) -> void:
 
 	# Post-flee boost: same multiplier fleeing used, but the countdown only
 	# starts once actually back on the path (see _process_returning()).
-	var speed := patrol_speed
+	var speed := data.patrol_speed
 	if _boost_time_remaining > 0.0:
-		speed *= flee_speed_multiplier
+		speed *= data.flee_speed_multiplier
 		_boost_time_remaining -= delta
 
 	_offset = fmod(_offset + speed * delta, length)
@@ -140,12 +135,12 @@ func _process_approaching(delta: float) -> void:
 	var to_hook := hook_pos - global_position
 	var distance := to_hook.length()
 
-	if distance > hook_radius:
-		var step: float = min(patrol_speed * delta, distance - hook_radius)
+	if distance > data.hook_radius:
+		var step: float = min(data.patrol_speed * delta, distance - data.hook_radius)
 		global_position += to_hook.normalized() * step
 		if to_hook.length_squared() > 0.0001:
 			rotation = to_hook.angle()
-		if distance - step <= hook_radius:
+		if distance - step <= data.hook_radius:
 			_enter_hookable()
 		return
 
@@ -168,7 +163,7 @@ func _process_approaching(delta: float) -> void:
 ## hook attempt in time.
 func _enter_hookable() -> void:
 	_line.set_hook_ready(true)
-	_hookable_time_remaining = hookable_timeout
+	_hookable_time_remaining = data.hookable_timeout
 
 
 ## Called by GameDirector.handle_hook_attempted() once a rhythm sequence
@@ -182,8 +177,17 @@ func cancel_hookable_timeout() -> void:
 	_hookable_timeout_cancelled = true
 
 
+## Read by GameDirector when starting a rhythm attempt against this target.
+func get_rhythm_pattern() -> RhythmPattern:
+	return data.rhythm_pattern if data else null
+
+
+func get_max_mistakes() -> int:
+	return data.max_mistakes if data else 0
+
+
 func _process_fleeing_away(delta: float) -> void:
-	var step := patrol_speed * flee_speed_multiplier * delta
+	var step := data.patrol_speed * data.flee_speed_multiplier * delta
 	global_position += _flee_direction * step
 	rotation = _flee_direction.angle()
 
@@ -209,14 +213,14 @@ func _begin_returning() -> void:
 func _process_returning(delta: float) -> void:
 	var to_target := _return_target - global_position
 	var distance := to_target.length()
-	var step: float = patrol_speed * flee_speed_multiplier * delta
+	var step: float = data.patrol_speed * data.flee_speed_multiplier * delta
 
 	if distance <= step:
 		# Snapping _offset here (rather than resuming from wherever it left
 		# off) is what makes PATROL continue in the correct direction — its
 		# own offset-forward walk does the rest.
 		_offset = _return_offset
-		_boost_time_remaining = flee_boost_duration
+		_boost_time_remaining = data.flee_boost_duration
 		_state = State.PATROL
 		_update_transform()
 		return
@@ -238,7 +242,7 @@ func flee() -> void:
 		away = global_position - _line.get_hook_position()
 		_line.set_hook_ready(false)
 	_flee_direction = away.normalized() if away.length_squared() > 0.0001 else Vector2.RIGHT
-	_away_time_remaining = flee_away_duration
+	_away_time_remaining = data.flee_away_duration
 	_hookable_time_remaining = -1.0
 	_hookable_timeout_cancelled = false
 	_line = null

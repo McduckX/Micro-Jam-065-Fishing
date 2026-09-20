@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="RhythmPattern" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/rhythm_pattern.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/rhythm_note.gd" id="2"]
+
+[sub_resource type="Resource" id="Note_1"]
+script = ExtResource("2")
+time = 1.0
+
+[sub_resource type="Resource" id="Note_2"]
+script = ExtResource("2")
+action = "rhythm_left"
+time = 1.8
+
+[sub_resource type="Resource" id="Note_3"]
+script = ExtResource("2")
+action = "rhythm_down"
+time = 2.6
+
+[sub_resource type="Resource" id="Note_4"]
+script = ExtResource("2")
+action = "rhythm_right"
+time = 3.2
+is_hold = true
+hold_duration = 0.6
+
+[resource]
+script = ExtResource("1")
+notes = Array[ExtResource("2")]([SubResource("Note_1"), SubResource("Note_2"), SubResource("Note_3"), SubResource("Note_4")])

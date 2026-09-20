@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://cjkpjtvm7vsy" path="res://scenes/world/Whirlpool.tscn" id="4_whirlpool"]
 [ext_resource type="PackedScene" path="res://scenes/fish/Target.tscn" id="5_target"]
 [ext_resource type="PackedScene" path="res://scenes/player/FishingLine.tscn" id="6_fishing_line"]
+[ext_resource type="PackedScene" path="res://scenes/fish/FinalCreature.tscn" id="7_final_creature"]
+[ext_resource type="Resource" path="res://resources/targets/kraken.tres" id="8_kraken_data"]
 
 [sub_resource type="Curve2D" id="Curve2D_patrol_a"]
 _data = {
@@ -64,6 +66,12 @@ curve = SubResource("Curve2D_patrol_c")
 position = Vector2(1900, 500)
 
 [node name="Hazards" type="Node2D" parent="." unique_id=727824386]
+
+[node name="FinalCreatures" type="Node2D" parent="."]
+
+[node name="Kraken" parent="FinalCreatures" instance=ExtResource("7_final_creature")]
+position = Vector2(3150, 300)
+data = ExtResource("8_kraken_data")
 
 [node name="Boat" parent="." unique_id=756749579 instance=ExtResource("2_boat")]
 position = Vector2(1900, 500)

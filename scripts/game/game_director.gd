@@ -6,22 +6,10 @@ extends Node
 ## reloading Game.tscn, which recreates this node from scratch — see
 ## GameDesign.md §19 (Try Again must start a completely new run).
 ##
-## Pass 1 scope: only the ControlMode plumbing is real. Cycle/chain/timer
-## fields are placeholders wired up starting Pass 8 (run_state.gd) and
-## Pass 9 (CycleData resources).
-
-## Pass 7 scope: one hardcoded test phrase and mistake allowance, wired in
-## the inspector on Game.tscn's GameDirector node. Real per-target patterns
-## and mistake allowances (intermediate vs. final) arrive with chain data
-## in Pass 9.
-@export var test_rhythm_pattern: RhythmPattern
-@export var test_max_mistakes: int = 0
-
-## Pass 8 scope: a short hardcoded test chain (see run_state.gd) proving the
-## catch -> bait -> next-target loop closes. Real per-cycle chains arrive
-## with CycleData resources in Pass 9.
-@export var starting_bait: String = "Worm"
-@export var test_chain: Array[String] = ["Salmon", "Bear"]
+## Pass 9: cycle/chain progress is now backed by a real CycleData resource
+## (see cycle_data.gd) instead of hardcoded test strings. Only one CycleData
+## slot for now — multi-cycle progression is Pass 12's job.
+@export var cycle_data: CycleData
 
 ## Same "preload a known scene" idiom RhythmUI uses for RhythmNoteVisual.tscn
 ## — one fixed scene, no reason to make it an inspector slot.
@@ -29,7 +17,7 @@ const TARGET_SCENE: PackedScene = preload("res://scenes/fish/Target.tscn")
 
 signal control_mode_changed(new_mode: ControlMode.Mode)
 signal rhythm_requested(pattern: RhythmPattern, max_mistakes: int)
-signal bait_changed(bait_name: String)
+signal bait_changed(bait: TargetData)
 signal can_feed_changed(can_feed: bool)
 signal slice_completed
 
@@ -64,7 +52,7 @@ func _ready() -> void:
 	# director once at its own _ready() via get_first_node_in_group(), so
 	# the wiring survives scene restructuring without manual re-linking.
 	add_to_group("game_director")
-	run_state = RunState.new(starting_bait, test_chain)
+	run_state = RunState.new(cycle_data.starting_bait, cycle_data.chain)
 	call_deferred("_resolve_dependencies")
 
 
@@ -121,18 +109,31 @@ func handle_line_cleared() -> void:
 ## connects to the rhythm_requested signal this emits, rather than
 ## GameDirector holding a direct reference to it, keeping the two decoupled
 ## via signals like everything else in this architecture.
+##
+## Pass 9: the pattern/mistake-allowance are no longer a single hardcoded
+## pair — they're read from whichever creature is actually being hooked
+## (Target and FinalCreature both expose get_rhythm_pattern()/
+## get_max_mistakes(), the same "small clean method" convention as
+## get_hook_position()/set_hook_ready()).
 func handle_hook_attempted() -> void:
 	if control_mode != ControlMode.Mode.LINE_ACTIVE:
 		return
 	control_mode = ControlMode.Mode.RHYTHM
 
-	# The player made it in time — stop Target's own hookable_timeout
-	# countdown so it can't flee() out from under this attempt.
 	var target := get_tree().get_first_node_in_group("active_target")
-	if target and target.has_method("cancel_hookable_timeout"):
-		target.cancel_hookable_timeout()
+	var pattern: RhythmPattern = null
+	var max_mistakes := 0
+	if target:
+		# The player made it in time — stop Target's own hookable_timeout
+		# countdown so it can't flee() out from under this attempt. Only
+		# Target has this method (FinalCreature has no timeout to cancel).
+		if target.has_method("cancel_hookable_timeout"):
+			target.cancel_hookable_timeout()
+		if target.has_method("get_rhythm_pattern"):
+			pattern = target.get_rhythm_pattern()
+			max_mistakes = target.get_max_mistakes()
 
-	rhythm_requested.emit(test_rhythm_pattern, test_max_mistakes)
+	rhythm_requested.emit(pattern, max_mistakes)
 
 
 ## RhythmUI connects its own sequence_finished signal to this. Pass 8:
@@ -142,6 +143,10 @@ func handle_hook_attempted() -> void:
 ## active"), then hands the line back to FishingLine to clear and control
 ## back to STEERING — unlike Pass 7, something is always resolved by now,
 ## so there's nothing left to hold in LINE_ACTIVE for.
+##
+## Pass 9: a failed attempt against a FinalCreature simply does nothing
+## further — it has no flee(), so the elif below is already a no-op for it,
+## matching the resolved "stays put, ready to retry immediately" behavior.
 func handle_rhythm_finished(success: bool) -> void:
 	var target := get_tree().get_first_node_in_group("active_target")
 	if success:
@@ -156,6 +161,11 @@ func handle_rhythm_finished(success: bool) -> void:
 		control_mode = ControlMode.Mode.STEERING
 
 
+## Pass 9: if the next chain entry is a persistent FinalCreature, activates
+## the matching instance already placed in the world instead of spawning a
+## new Target — catching one needs no special-casing here at all, since
+## queue_free() and "don't spawn anything, chain is complete" already do
+## the right thing generically.
 func _resolve_catch(target: Node) -> void:
 	var parent: Node = null
 	if is_instance_valid(target):
@@ -165,8 +175,24 @@ func _resolve_catch(target: Node) -> void:
 	run_state.catch_current()
 	bait_changed.emit(run_state.current_bait)
 
-	if not run_state.is_chain_complete() and parent:
-		parent.add_child(TARGET_SCENE.instantiate())
+	if run_state.is_chain_complete():
+		return
+
+	var next_data: TargetData = run_state.chain[run_state.index]
+	if next_data.is_final_creature:
+		_activate_final_creature(next_data)
+	elif parent:
+		var next := TARGET_SCENE.instantiate()
+		next.data = next_data
+		parent.add_child(next)
+
+
+func _activate_final_creature(data: TargetData) -> void:
+	for creature in get_tree().get_nodes_in_group("final_creature"):
+		if creature.data == data:
+			creature.activate()
+			return
+	push_warning("GameDirector: no FinalCreature found matching '%s'." % data.display_name)
 
 
 ## Called by Boat before it would otherwise die at the whirlpool's lethal

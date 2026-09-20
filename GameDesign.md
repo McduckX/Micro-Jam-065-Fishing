@@ -152,6 +152,11 @@
    returns to its assigned path;
    returns to its normal movement speed.
    The player retains their existing bait after failure.
+   Final creatures
+   Each cycle's final creature (the one fed to the whirlpool) is not a patrol target. It is always present at a fixed position in its home region rather than being spawned and despawned.
+   Approaching it too closely is dangerous regardless of which bait is currently held — the exact effect is determined during the environmental-content pass.
+   It only responds to a hook attempt once the catch chain has reached it; casting at it before that has no effect beyond being retractable.
+   A failed hook attempt against it has no flee behavior — it is stationary by definition and remains hookable for an immediate retry, though a failure-specific consequence may also be added during the environmental-content pass.
 
 10. Boat Behavior While Fishing
     After casting:
