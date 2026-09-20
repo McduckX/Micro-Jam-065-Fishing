@@ -3,14 +3,17 @@ class_name RhythmUI
 ## Minimal 4-lane WASD rhythm minigame — see GameDesign.md §11 and the
 ## Pass 7 plan.
 ##
-## No per-note child nodes: the whole lane field is rendered in one _draw()
-## call driven by the pattern array and an elapsed-time accumulator, the
-## same "compute and draw, don't spawn nodes" preference already used by
-## Whirlpool's current field and Compass's arrow math.
+## Rendering is real textured nodes, not procedural drawing: a static Ring +
+## KeyLabel per lane (Lanes), and one RhythmNoteVisual instanced into
+## NoteLayer per note once it's due to spawn, freed once judged and its
+## flash has faded. RhythmUI still owns all timing/judging — the visuals are
+## pure presentation driven by _note_y() every frame (see update below).
 ##
 ## A note's screen position and its judging window both come from the same
 ## single formula (_note_y()) — there is no separately-tracked "spawn
-## moment" to keep in sync with the authored time a player must press at.
+## moment" to keep in sync with the authored time a player must press at; a
+## note's spawn_time is itself just solved from that same formula (see
+## start_sequence()).
 ##
 ## Reads rhythm_up/left/down/right exclusively, never move_forward/etc., so
 ## it can never contend with Boat's steering even if the control_mode gate
@@ -20,19 +23,29 @@ class_name RhythmUI
 
 enum State { IDLE, COUNTDOWN, PLAYING }
 
-const LANE_ACTIONS: Array[String] = ["rhythm_up", "rhythm_left", "rhythm_down", "rhythm_right"]
+## On-screen left-to-right order is A, S, W, D — see the Pass 7 Round 2 plan.
+const LANE_ACTIONS: Array[String] = ["rhythm_left", "rhythm_down", "rhythm_up", "rhythm_right"]
+
+const NOTE_VISUAL_SCENE: PackedScene = preload("res://scenes/ui/RhythmNoteVisual.tscn")
 
 @export_group("Layout")
+## Screen-space x the four lanes are centered around.
 @export var lane_center_x: float = 960.0
+## Horizontal distance between adjacent lane centers.
 @export var lane_spacing: float = 140.0
+## Screen-space y of the ring each note must reach at its authored time —
+## see _note_y(). Matches where the static Ring sprites sit in the scene.
 @export var hit_line_y: float = 900.0
-@export var note_radius: float = 24.0
+## Y position notes are instanced at — just above the visible top edge, so
+## they visibly fall in from off-screen rather than popping into existence
+## mid-lane.
+@export var spawn_y: float = -80.0
 
 @export_group("Timing")
 ## Pixels/sec notes fall. Only affects how far in advance a note becomes
 ## visible — never needs reconciling against authored note times, since
-## both judging and drawing read the same elapsed-time accumulator (see
-## _note_y()).
+## both judging and note-visual positioning read the same elapsed-time
+## accumulator (see _note_y()).
 @export var note_speed: float = 500.0
 ## Seconds of tolerance on either side of a note's authored time during
 ## which a press (or a hold's release check) judges Success.
@@ -41,10 +54,13 @@ const LANE_ACTIONS: Array[String] = ["rhythm_up", "rhythm_left", "rhythm_down", 
 @export var countdown_duration: float = 1.5
 
 @export_group("Feedback")
+## Tint applied to a note's circle/pill once judged Success.
 @export var success_color: Color = Color(0.3, 1.0, 0.4)
+## Tint applied to a note's circle/pill once judged Mistake.
 @export var mistake_color: Color = Color(1.0, 0.3, 0.3)
+## Tint applied to a note's circle/pill before it's judged.
 @export var idle_color: Color = Color(0.9, 0.9, 0.9)
-## Seconds a note's judgment flash color is shown before it stops drawing.
+## Seconds a note's judgment tint is shown before its visual is freed.
 @export var flash_duration: float = 0.15
 ## Seconds the Success!/Mistake! result text stays up after the sequence
 ## resolves, purely cosmetic — control_mode reverts immediately on
@@ -55,6 +71,7 @@ signal sequence_finished(success: bool)
 
 @onready var _countdown_label: Label = $CountdownLabel
 @onready var _result_label: Label = $ResultLabel
+@onready var _note_layer: Node2D = $NoteLayer
 
 var _state: State = State.IDLE
 var _max_mistakes: int = 0
@@ -86,12 +103,20 @@ func _resolve_dependencies() -> void:
 
 ## Called by GameDirector in response to FishingLine.hook_attempted.
 func start_sequence(pattern: RhythmPattern, max_mistakes: int) -> void:
+	# A prior sequence may not have had time to free all its visuals yet
+	# (e.g. immediately re-hooking during the result-display wait) — clear
+	# them now rather than leaking nodes into the new sequence.
+	for state in _note_states:
+		if state["visual"]:
+			state["visual"].queue_free()
+
 	_max_mistakes = max_mistakes
 	_mistake_count = 0
 	_elapsed = 0.0
 	_countdown_remaining = countdown_duration
 	_note_states.clear()
 	_last_note_end = 0.0
+	var travel_time: float = (hit_line_y - spawn_y) / note_speed
 	for note in pattern.notes:
 		_note_states.append({
 			"note": note,
@@ -99,6 +124,8 @@ func start_sequence(pattern: RhythmPattern, max_mistakes: int) -> void:
 			"success": false,
 			"press_registered": false,
 			"flash_time": -INF,
+			"visual": null,
+			"spawn_time": note.time - travel_time,
 		})
 		var end_time: float = note.time + (note.hold_duration if note.is_hold else 0.0)
 		_last_note_end = max(_last_note_end, end_time)
@@ -107,7 +134,6 @@ func start_sequence(pattern: RhythmPattern, max_mistakes: int) -> void:
 	visible = true
 	_result_label.visible = false
 	_countdown_label.visible = true
-	queue_redraw()
 
 
 func _process(delta: float) -> void:
@@ -118,14 +144,46 @@ func _process(delta: float) -> void:
 			if _countdown_remaining <= 0.0:
 				_state = State.PLAYING
 				_countdown_label.visible = false
-			queue_redraw()
 		State.PLAYING:
 			_elapsed += delta
 			_judge_timeouts()
+			_update_visuals()
 			if _elapsed > _last_note_end + window_seconds:
 				_finish_sequence()
-			else:
-				queue_redraw()
+
+
+## Spawns each note's visual once it's due, updates every live visual's
+## position/size/color from the same _note_y() formula the judging code
+## uses, and frees visuals once judged and their flash has faded.
+func _update_visuals() -> void:
+	for state in _note_states:
+		var note: RhythmNote = state["note"]
+
+		if not state["visual"] and _elapsed >= state["spawn_time"]:
+			var spawned: RhythmNoteVisual = NOTE_VISUAL_SCENE.instantiate()
+			_note_layer.add_child(spawned)
+			spawned.configure(note.is_hold)
+			state["visual"] = spawned
+
+		var visual: RhythmNoteVisual = state["visual"]
+		if not visual:
+			continue
+
+		if state["judged"] and _elapsed - state["flash_time"] >= flash_duration:
+			visual.queue_free()
+			state["visual"] = null
+			continue
+
+		var head := Vector2(_lane_x(LANE_ACTIONS.find(note.action)), _note_y(note.time))
+		var tail := head
+		if note.is_hold:
+			tail = Vector2(head.x, _note_y(note.time + note.hold_duration))
+		visual.update_transform(head, tail)
+
+		var color: Color = idle_color
+		if state["judged"]:
+			color = success_color if state["success"] else mistake_color
+		visual.set_color(color)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -196,7 +254,12 @@ func _judge(state: Dictionary, success: bool) -> void:
 func _finish_sequence() -> void:
 	var success := _mistake_count <= _max_mistakes
 	_state = State.IDLE
-	queue_redraw()
+	# Defensive: any note whose judgment flash hadn't finished fading yet
+	# doesn't get to linger once the sequence is over.
+	for state in _note_states:
+		if state["visual"]:
+			state["visual"].queue_free()
+			state["visual"] = null
 	sequence_finished.emit(success)
 
 	_result_label.text = "Success!" if success else "Mistake!"
@@ -210,43 +273,12 @@ func _finish_sequence() -> void:
 		_result_label.visible = false
 
 
-func _draw() -> void:
-	if _state == State.IDLE:
-		return
-
-	for lane in LANE_ACTIONS.size():
-		var x := _lane_x(lane)
-		draw_line(Vector2(x, 0.0), Vector2(x, size.y), Color(1.0, 1.0, 1.0, 0.08), 2.0)
-		draw_circle(Vector2(x, hit_line_y), note_radius + 6.0, Color(1.0, 1.0, 1.0, 0.15))
-
-	if _state != State.PLAYING:
-		return
-
-	for state in _note_states:
-		var note: RhythmNote = state["note"]
-		if state["judged"] and _elapsed - state["flash_time"] >= flash_duration:
-			continue  # judged and the flash has faded — stop drawing
-
-		var color: Color = idle_color
-		if state["judged"]:
-			color = success_color if state["success"] else mistake_color
-
-		var x := _lane_x(LANE_ACTIONS.find(note.action))
-		if note.is_hold:
-			var y_start := _note_y(note.time)
-			var y_end := _note_y(note.time + note.hold_duration)
-			draw_rect(Rect2(x - note_radius * 0.5, y_end, note_radius, y_start - y_end), color)
-			draw_circle(Vector2(x, y_start), note_radius * 0.5, color)
-			draw_circle(Vector2(x, y_end), note_radius * 0.5, color)
-		else:
-			draw_circle(Vector2(x, _note_y(note.time)), note_radius, color)
-
-
 func _lane_x(lane: int) -> float:
 	return lane_center_x + (lane - 1.5) * lane_spacing
 
 
-## The single formula both drawing and judging are built around — see the
-## class doc. A note reaches hit_line_y at the exact instant elapsed == t.
+## The single formula both note-visual positioning and judging are built
+## around — see the class doc. A note reaches hit_line_y at the exact
+## instant elapsed == t.
 func _note_y(t: float) -> float:
 	return hit_line_y - (t - _elapsed) * note_speed

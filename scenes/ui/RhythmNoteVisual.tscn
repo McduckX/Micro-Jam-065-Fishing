@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://6stsgt7yagye"]
+
+[ext_resource type="Script" uid="uid://bouxc86i1lf2d" path="res://scripts/ui/rhythm_note_visual.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://dnf7i5mf88tlp" path="res://assets/temp/temp_rhythm_note_circle.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://eidkywcqdnp2" path="res://assets/temp/temp_rhythm_hold_pill.png" id="3"]
+
+[node name="RhythmNoteVisual" type="Node2D" unique_id=1439824055]
+script = ExtResource("1")
+
+[node name="HoldBody" type="NinePatchRect" parent="." unique_id=2146534874]
+offset_left = -72.0
+offset_top = -149.0
+offset_right = 72.0
+offset_bottom = 67.0
+texture = ExtResource("3")
+patch_margin_left = 8
+patch_margin_top = 48
+patch_margin_right = 8
+patch_margin_bottom = 48
+
+[node name="Circle" type="Sprite2D" parent="." unique_id=372790017]
+texture = ExtResource("2")

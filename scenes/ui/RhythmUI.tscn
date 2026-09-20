@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://dekubwqg0dk4"]
 
 [ext_resource type="Script" uid="uid://ekgfnhoxjdfo" path="res://scripts/ui/rhythm_ui.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://0cd1yeva8bb2" path="res://assets/temp/temp_rhythm_ring.png" id="2"]
 
 [node name="RhythmUI" type="Control" unique_id=1607070273]
 layout_mode = 3
@@ -11,9 +12,75 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1")
-note_radius = 48.0
+lane_spacing = 240.0
+metadata/_edit_vertical_guides_ = [960.0, 1080.0, 1320.0, 840.0, 600.0]
 
-[node name="CountdownLabel" type="Label" parent="." unique_id=1626243791]
+[node name="Lanes" type="Node2D" parent="." unique_id=1574024149]
+position = Vector2(54, 0)
+
+[node name="LaneA" type="Node2D" parent="Lanes" unique_id=1372295788]
+position = Vector2(545, 900)
+
+[node name="Ring" type="Sprite2D" parent="Lanes/LaneA" unique_id=1725503054]
+texture = ExtResource("2")
+
+[node name="KeyLabel" type="Label" parent="Lanes/LaneA" unique_id=1737590521]
+offset_left = -30.0
+offset_top = 70.0
+offset_right = 30.0
+offset_bottom = 100.0
+theme_override_font_sizes/font_size = 28
+text = "A"
+horizontal_alignment = 1
+
+[node name="LaneS" type="Node2D" parent="Lanes" unique_id=8514572]
+position = Vector2(786, 900)
+
+[node name="Ring" type="Sprite2D" parent="Lanes/LaneS" unique_id=1502050722]
+texture = ExtResource("2")
+
+[node name="KeyLabel" type="Label" parent="Lanes/LaneS" unique_id=1914337537]
+offset_left = -30.0
+offset_top = 70.0
+offset_right = 30.0
+offset_bottom = 100.0
+theme_override_font_sizes/font_size = 28
+text = "S"
+horizontal_alignment = 1
+
+[node name="LaneW" type="Node2D" parent="Lanes" unique_id=713519564]
+position = Vector2(1025, 900)
+
+[node name="Ring" type="Sprite2D" parent="Lanes/LaneW" unique_id=795336492]
+texture = ExtResource("2")
+
+[node name="KeyLabel" type="Label" parent="Lanes/LaneW" unique_id=1791932123]
+offset_left = -30.0
+offset_top = 70.0
+offset_right = 30.0
+offset_bottom = 100.0
+theme_override_font_sizes/font_size = 28
+text = "W"
+horizontal_alignment = 1
+
+[node name="LaneD" type="Node2D" parent="Lanes" unique_id=773398103]
+position = Vector2(1266, 900)
+
+[node name="Ring" type="Sprite2D" parent="Lanes/LaneD" unique_id=119304564]
+texture = ExtResource("2")
+
+[node name="KeyLabel" type="Label" parent="Lanes/LaneD" unique_id=31823602]
+offset_left = -30.0
+offset_top = 70.0
+offset_right = 30.0
+offset_bottom = 100.0
+theme_override_font_sizes/font_size = 28
+text = "D"
+horizontal_alignment = 1
+
+[node name="NoteLayer" type="Node2D" parent="." unique_id=229872407]
+
+[node name="CountdownLabel" type="Label" parent="." unique_id=2072460525]
 layout_mode = 0
 offset_left = 860.0
 offset_top = 437.0
@@ -23,7 +90,7 @@ theme_override_font_sizes/font_size = 64
 text = "3"
 horizontal_alignment = 1
 
-[node name="ResultLabel" type="Label" parent="." unique_id=67627765]
+[node name="ResultLabel" type="Label" parent="." unique_id=92905097]
 layout_mode = 0
 offset_left = 756.0
 offset_top = 318.0
