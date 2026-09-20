@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://bmkh4ggfwqo1w"]
+
+[ext_resource type="Texture2D" uid="uid://da0xvmqv1y2mt" path="res://assets/temp/Map_Canvas.png" id="1_y03mr"]
+
+[node name="WorldScene" type="Node2D" unique_id=65008543]
+
+[node name="Background" type="Sprite2D" parent="." unique_id=706776810]
+position = Vector2(1762, 1553)
+texture = ExtResource("1_y03mr")
