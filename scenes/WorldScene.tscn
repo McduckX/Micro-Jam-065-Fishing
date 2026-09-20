@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://bmkh4ggfwqo1w"]
 
 [ext_resource type="Texture2D" uid="uid://da0xvmqv1y2mt" path="res://assets/temp/Map_Canvas.png" id="1_y03mr"]
+[ext_resource type="PackedScene" uid="uid://bisiea6edsa0k" path="res://scenes/player/Boat.tscn" id="2_boat"]
+[ext_resource type="Script" uid="uid://dohribawximax" path="res://scripts/world/follow_camera.gd" id="3_cam"]
 
 [node name="WorldScene" type="Node2D" unique_id=65008543]
 
@@ -8,21 +10,37 @@
 position = Vector2(1762, 1553)
 texture = ExtResource("1_y03mr")
 
-[node name="Land" type="StaticBody2D" parent="."]
+[node name="Land" type="StaticBody2D" parent="." unique_id=1640488207]
 collision_layer = 2
 collision_mask = 0
 
-[node name="Regions" type="Node2D" parent="."]
+[node name="TestShoreline" type="CollisionPolygon2D" parent="Land" unique_id=1239452864]
+position = Vector2(-16, 618)
+polygon = PackedVector2Array(1650, 50, 1900, 50, 1900, 1065, 1650, 280)
 
-[node name="RegionTop" type="Node2D" parent="Regions"]
+[node name="Regions" type="Node2D" parent="." unique_id=735064491]
 
-[node name="RegionLeft" type="Node2D" parent="Regions"]
+[node name="RegionTop" type="Node2D" parent="Regions" unique_id=1530564906]
 
-[node name="RegionBottom" type="Node2D" parent="Regions"]
+[node name="RegionLeft" type="Node2D" parent="Regions" unique_id=2098905846]
 
-[node name="RegionRight" type="Node2D" parent="Regions"]
+[node name="RegionBottom" type="Node2D" parent="Regions" unique_id=93040754]
 
-[node name="SpawnMarker" type="Marker2D" parent="."]
+[node name="RegionRight" type="Node2D" parent="Regions" unique_id=1090916515]
+
+[node name="SpawnMarker" type="Marker2D" parent="." unique_id=1481769321]
 position = Vector2(1900, 500)
 
-[node name="Hazards" type="Node2D" parent="."]
+[node name="Hazards" type="Node2D" parent="." unique_id=727824386]
+
+[node name="Boat" parent="." unique_id=756749579 instance=ExtResource("2_boat")]
+position = Vector2(1900, 500)
+
+[node name="GameCamera" type="Camera2D" parent="." unique_id=1650231830]
+position = Vector2(1900, 500)
+limit_left = 0
+limit_top = 0
+limit_right = 3524
+limit_bottom = 3106
+script = ExtResource("3_cam")
+target_path = NodePath("../Boat")

@@ -18,3 +18,11 @@ var control_mode: ControlMode.Mode = ControlMode.Mode.STEERING:
 			return
 		control_mode = value
 		control_mode_changed.emit(control_mode)
+
+
+func _ready() -> void:
+	# Self-registering group lookup instead of exported NodePaths: any node
+	# that needs the current control mode (Boat, RhythmUI, ...) finds this
+	# director once at its own _ready() via get_first_node_in_group(), so
+	# the wiring survives scene restructuring without manual re-linking.
+	add_to_group("game_director")
