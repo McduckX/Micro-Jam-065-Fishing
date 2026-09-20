@@ -15,11 +15,22 @@ extends Node
 ## — one fixed scene, no reason to make it an inspector slot.
 const TARGET_SCENE: PackedScene = preload("res://scenes/fish/Target.tscn")
 
+## Pass 10 tuning: how long the timer-expiry pull-in to the whirlpool's
+## centre takes, once control locks. Not per-cycle data (unlike
+## timer_duration on CycleData) — this is a fixed presentation beat, so it
+## lives here rather than on the resource.
+@export var expire_pull_duration: float = 2.0
+
 signal control_mode_changed(new_mode: ControlMode.Mode)
 signal rhythm_requested(pattern: RhythmPattern, max_mistakes: int)
 signal bait_changed(bait: TargetData)
 signal can_feed_changed(can_feed: bool)
 signal slice_completed
+## Pass 10: emitted every frame while the timer is counting down (not a
+## change-only signal like bait_changed/can_feed_changed, since this value
+## changes continuously rather than as a discrete event — HUD.gd polls it
+## for both the hunger bar and the danger vignette in one connection).
+signal time_remaining_changed(time_remaining: float, drain_fraction: float)
 
 var run_state: RunState
 
@@ -45,6 +56,15 @@ var _whirlpool: Whirlpool
 var _fishing_line: Node
 var _slice_complete: bool = false
 
+## Pass 10: counts down from cycle_data.timer_duration; GameDesign.md §7
+## ("Hunger behavior"). Frozen once _expired is set — there's nothing left
+## to count down to.
+var time_remaining: float = 0.0
+## True from the instant the timer first reaches zero — GameDesign.md §7's
+## "the player cannot recover afterward." Distinct from _slice_complete
+## (that's a win-condition freeze; this is a loss-condition one).
+var _expired: bool = false
+
 
 func _ready() -> void:
 	# Self-registering group lookup instead of exported NodePaths: any node
@@ -53,6 +73,7 @@ func _ready() -> void:
 	# the wiring survives scene restructuring without manual re-linking.
 	add_to_group("game_director")
 	run_state = RunState.new(cycle_data.starting_bait, cycle_data.chain)
+	time_remaining = cycle_data.timer_duration
 	call_deferred("_resolve_dependencies")
 
 
@@ -68,10 +89,21 @@ func _resolve_dependencies() -> void:
 	# deferred resolutions have no guaranteed order relative to each other.
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if _slice_complete or not _boat or not _whirlpool:
 		return
 	can_feed = _whirlpool.is_within_feed_radius(_boat.global_position) and run_state.is_chain_complete()
+
+	if _expired:
+		return
+	time_remaining = max(time_remaining - delta, 0.0)
+	var drain_fraction := 1.0 - time_remaining / cycle_data.timer_duration
+	_whirlpool.growth_fraction = drain_fraction
+	time_remaining_changed.emit(time_remaining, drain_fraction)
+
+	if time_remaining <= 0.0:
+		_expired = true
+		_try_begin_expire_sequence()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -87,6 +119,26 @@ func _unhandled_input(event: InputEvent) -> void:
 func handle_boat_died() -> void:
 	print("GameDirector: boat died (placeholder) — whirlpool consumed the player.")
 	control_mode = ControlMode.Mode.LOCKED
+
+
+## Called once time_remaining first reaches zero. GameDesign.md §7: "an
+## active rhythm sequence may finish" — so a RHYTHM sequence in progress is
+## left alone here; handle_rhythm_finished() checks _expired itself once
+## that sequence resolves and starts the pull-in from there instead. Any
+## other mode (STEERING, LINE_ACTIVE) has no such grace period and locks
+## immediately.
+func _try_begin_expire_sequence() -> void:
+	if control_mode == ControlMode.Mode.RHYTHM:
+		return
+	if _fishing_line:
+		_fishing_line.force_clear()
+	_begin_pull_in()
+
+
+func _begin_pull_in() -> void:
+	control_mode = ControlMode.Mode.LOCKED
+	if _boat and _boat.has_method("begin_pulled_to_center"):
+		_boat.begin_pulled_to_center(_whirlpool.global_position, expire_pull_duration)
 
 
 ## FishingLine connects its own cast_started/line_cleared signals to these
@@ -157,7 +209,9 @@ func handle_rhythm_finished(success: bool) -> void:
 	if _fishing_line:
 		_fishing_line.force_clear()
 
-	if control_mode == ControlMode.Mode.RHYTHM:
+	if _expired:
+		_begin_pull_in()
+	elif control_mode == ControlMode.Mode.RHYTHM:
 		control_mode = ControlMode.Mode.STEERING
 
 

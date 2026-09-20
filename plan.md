@@ -508,7 +508,7 @@ Per §15/§23's deferred "compass appearance / distance display" question, raise
 
 **Pass 9 — Data-driven chains.** `TargetData` + `CycleData` resources; migrate the hardcoded test chain; author the full Cycle 1 chain (Worm → Salmon → Bear → Submarine → Pirate Ship → Blue Whale → Kraken) with placeholder art. *This is the pass where the Risk 2 lever becomes real: chain length is an inspector array from here on.*
 
-**Pass 10 — Cycle 1 complete.** Real cycle timer, whirlpool growth as it drains, screen-edge red warning, timer-expiry death sequence (control removed, pulled to centre, eaten).
+**Pass 10 — Cycle 1 complete.** Real cycle timer, whirlpool growth as it drains, screen-edge red warning, timer-expiry death sequence (control removed, pulled to centre, eaten). *Resolved with the user: only `current_radius` grows (not `lethal_radius`); the red warning is a procedural shader vignette, not a placeholder art asset; expiry does a scripted pull-in to the whirlpool's centre and then reuses the existing placeholder death — see the `Pass 10:` comments in `game_director.gd`, `whirlpool.gd`, `boat.gd`, and `hud.gd` for the implementation detail, matching Pass 9's practice of documenting decisions inline in code rather than expanding this file further.*
 
 **Pass 11 — Region locking and unlocking.** `RegionGate.tscn` ×4, cover visuals, blocking walls, fade-and-remove unlock, path eligibility restricted to unlocked regions. *Watch for design §7: the current can pin the player against a locked wall — verify this is survivable.*
 

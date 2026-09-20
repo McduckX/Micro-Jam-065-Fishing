@@ -41,24 +41,45 @@ class_name Whirlpool
 ## straight toward centre. Flip the sign to reverse the spin direction.
 @export var max_tangential_strength: float = 220.0
 
+@export_group("Hunger Growth")
+## Pass 10 (GameDesign.md §7): current_radius's multiplier once
+## growth_fraction reaches 1.0 (timer fully drained). lethal_radius and
+## feed_radius are deliberately NOT scaled by this — only how far the
+## current reaches grows as the cycle's timer drains, not how close the
+## instant-death core is.
+@export var current_radius_growth_multiplier: float = 1.8
+## 0.0 at the start of a cycle's timer, 1.0 once it's fully drained. A
+## plain runtime var, not a signal-backed property: GameDirector writes
+## this every _process() frame (the same "exported reference, no signal"
+## idiom already used for Boat's direct Whirlpool reference), since this
+## changes continuously rather than as a discrete event worth a signal.
+var growth_fraction: float = 0.0
+
 
 func _ready() -> void:
 	add_to_group("whirlpool")
 
 
+## current_radius scaled up toward current_radius_growth_multiplier as
+## growth_fraction climbs from 0 to 1 — see the Hunger Growth export group.
+func _effective_current_radius() -> float:
+	return lerp(current_radius, current_radius * current_radius_growth_multiplier, growth_fraction)
+
+
 ## Velocity contribution (units/sec) blending inward pull and tangential
-## swirl, eased in (quadratic) from 0 at current_radius to full strength at
-## lethal_radius — the outer band stays gentle, danger concentrates near the
-## core. Zero beyond current_radius.
+## swirl, eased in (quadratic) from 0 at the (possibly grown) current radius
+## to full strength at lethal_radius — the outer band stays gentle, danger
+## concentrates near the core. Zero beyond the current radius.
 func get_current_force(global_pos: Vector2) -> Vector2:
 	var offset := global_position - global_pos
 	var dist := offset.length()
-	if dist >= current_radius or dist < 0.001:
+	var effective_current_radius := _effective_current_radius()
+	if dist >= effective_current_radius or dist < 0.001:
 		return Vector2.ZERO
 
 	# Explicitly typed: max()/min() are variadic Variant-returning builtins,
 	# so `:=` can't infer a concrete type from them here.
-	var falloff_band: float = max(current_radius - lethal_radius, 0.001)
+	var falloff_band: float = max(effective_current_radius - lethal_radius, 0.001)
 	var t := 1.0 - clampf((dist - lethal_radius) / falloff_band, 0.0, 1.0)
 	t *= t  # ease-in: keeps the outer band forgiving, concentrates real danger near the core
 	var dir_in := offset / dist

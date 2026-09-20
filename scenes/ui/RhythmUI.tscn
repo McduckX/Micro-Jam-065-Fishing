@@ -15,6 +15,15 @@ script = ExtResource("1")
 lane_spacing = 240.0
 metadata/_edit_vertical_guides_ = [960.0, 1080.0, 1320.0, 840.0, 600.0]
 
+[node name="Dimmer" type="ColorRect" parent="." unique_id=1844156543]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.3)
+
 [node name="Lanes" type="Node2D" parent="." unique_id=1574024149]
 position = Vector2(54, 0)
 

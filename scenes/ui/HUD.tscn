@@ -4,7 +4,17 @@
 [ext_resource type="Script" uid="uid://cyg0poulrqnnv" path="res://scripts/ui/compass.gd" id="2"]
 [ext_resource type="Texture2D" uid="uid://dtyss50b1xnww" path="res://assets/temp/temp_compass_ring.png" id="3"]
 [ext_resource type="Texture2D" uid="uid://c8l6ovidr28t5" path="res://assets/temp/temp_compass_arrow.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://dyg1mrae10gsn" path="res://assets/temp/temp_hunger_bar_background.png" id="6_jlufg"]
 [ext_resource type="Texture2D" uid="uid://obykx73mk02q" path="res://assets/temp/temp_hud_bait_panel_background.png" id="6_rnyu1"]
+[ext_resource type="Texture2D" uid="uid://cdn6ypjyvbuna" path="res://assets/temp/temp_hunger_fill.png" id="7_l20r4"]
+[ext_resource type="Shader" uid="uid://bd6w6lwgnd4f8" path="res://shaders/danger_vignette.gdshader" id="8_vignette"]
+
+[sub_resource type="ShaderMaterial" id="SubResource_1"]
+shader = ExtResource("8_vignette")
+shader_parameter/vignette_color = Color(0.7, 0, 0, 0.85)
+shader_parameter/intensity = 0.0
+shader_parameter/vignette_reach = 0.12
+shader_parameter/vignette_softness = 0.28
 
 [node name="HUD" type="Control" unique_id=344383103]
 layout_mode = 3
@@ -34,15 +44,6 @@ offset_right = 502.0
 offset_bottom = 1027.0
 theme_override_font_sizes/font_size = 24
 text = "Bait: —"
-
-[node name="TimerLabel" type="Label" parent="." unique_id=762081885]
-layout_mode = 0
-offset_left = 27.0
-offset_top = 24.0
-offset_right = 327.0
-offset_bottom = 52.0
-theme_override_font_sizes/font_size = 24
-text = "Timer: --:--"
 
 [node name="FeedPromptLabel" type="Label" parent="." unique_id=102690976]
 layout_mode = 0
@@ -86,3 +87,30 @@ offset_bottom = 83.0
 grow_horizontal = 2
 grow_vertical = 2
 stretch_mode = 5
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="." unique_id=510434725]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.093
+anchor_right = 0.5
+anchor_bottom = 0.093
+offset_left = -385.0
+offset_top = -95.44
+offset_right = 385.0
+offset_bottom = 94.56
+grow_horizontal = 2
+value = 100.0
+texture_under = ExtResource("6_jlufg")
+texture_progress = ExtResource("7_l20r4")
+texture_progress_offset = Vector2(225, 57)
+
+[node name="DangerVignette" type="ColorRect" parent="." unique_id=933217660]
+material = SubResource("SubResource_1")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

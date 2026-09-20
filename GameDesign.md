@@ -113,6 +113,7 @@
    the boat is pulled into the center;
    the monster eats the player.
    Timer duration will be tuned later.
+   Pass 10 resolves which radius grows: only the current's reach grows as the timer drains — the instant-death core stays a fixed size the whole cycle. "The whirlpool covers the map" at zero is delivered as a scripted pull-in-and-death sequence rather than the lethal radius itself expanding to map-covering size.
 
 8. Casting System
    The player may cast whenever they possess bait.

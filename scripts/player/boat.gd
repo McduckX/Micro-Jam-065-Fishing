@@ -56,6 +56,18 @@ var _whirlpool: Whirlpool
 var _director: Node
 var _is_dead: bool = false
 
+## Pass 10 (GameDesign.md §7): true while GameDirector is pulling the boat
+## into the whirlpool's centre after the cycle timer expires. A scripted
+## position lerp, not physics — deliberately bypasses move_and_slide()
+## entirely (see the early-return in _physics_process below), matching "the
+## player control is removed" rather than modelling it as just another
+## input state.
+var _is_expiring: bool = false
+var _expire_elapsed: float = 0.0
+var _expire_duration: float = 0.0
+var _expire_start_pos: Vector2
+var _expire_target_pos: Vector2
+
 
 func _ready() -> void:
 	add_to_group("boat")
@@ -101,9 +113,39 @@ func _on_control_mode_changed(new_mode: ControlMode.Mode) -> void:
 	_control_mode = new_mode
 
 
+## Called by GameDirector once the cycle timer expires and control locks
+## (see game_director.gd's _begin_pull_in()). Captures the current position
+## as the lerp's start so the motion is always continuous from wherever the
+## boat happens to be, regardless of speed at the moment of expiry.
+func begin_pulled_to_center(target_pos: Vector2, duration: float) -> void:
+	_is_expiring = true
+	_expire_elapsed = 0.0
+	_expire_duration = max(duration, 0.001)
+	_expire_start_pos = global_position
+	_expire_target_pos = target_pos
+	speed = 0.0
+	velocity = Vector2.ZERO
+
+
 func _physics_process(delta: float) -> void:
 	if _is_dead:
 		return  # placeholder death freeze — see _die()
+
+	if _is_expiring:
+		# Scripted position lerp, not physics: bypasses _handle_steering(),
+		# _apply_passive_drag(), and move_and_slide() entirely for the
+		# duration of the pull-in, which is what makes "player control is
+		# removed" true by construction rather than by another ControlMode
+		# check. Ends by reaching the whirlpool's centre, which is already
+		# within lethal_radius by definition, but _die() is called directly
+		# here rather than relying on next frame's lethal-radius check, so
+		# the timing of "reaches centre" and "dies" line up exactly.
+		_expire_elapsed += delta
+		var t := clampf(_expire_elapsed / _expire_duration, 0.0, 1.0)
+		global_position = _expire_start_pos.lerp(_expire_target_pos, t)
+		if t >= 1.0:
+			_die()
+		return
 
 	if _control_mode == ControlMode.Mode.STEERING:
 		_handle_steering(delta)
