@@ -7,3 +7,22 @@
 [node name="Background" type="Sprite2D" parent="." unique_id=706776810]
 position = Vector2(1762, 1553)
 texture = ExtResource("1_y03mr")
+
+[node name="Land" type="StaticBody2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="Regions" type="Node2D" parent="."]
+
+[node name="RegionTop" type="Node2D" parent="Regions"]
+
+[node name="RegionLeft" type="Node2D" parent="Regions"]
+
+[node name="RegionBottom" type="Node2D" parent="Regions"]
+
+[node name="RegionRight" type="Node2D" parent="Regions"]
+
+[node name="SpawnMarker" type="Marker2D" parent="."]
+position = Vector2(1900, 500)
+
+[node name="Hazards" type="Node2D" parent="."]

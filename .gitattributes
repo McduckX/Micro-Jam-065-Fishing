@@ -1,2 +1,18 @@
 # Normalize EOL for all files that Git considers text files.
 * text=auto eol=lf
+
+# Binary assets: never let Git attempt EOL/text normalization on these.
+# Two artists will be committing images and audio directly; without this,
+# a misdetected binary can get corrupted on checkout across platforms.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.bmp binary
+*.wav binary
+*.ogg binary
+*.mp3 binary
+*.ttf binary
+*.otf binary
+*.zip binary
+*.pck binary
