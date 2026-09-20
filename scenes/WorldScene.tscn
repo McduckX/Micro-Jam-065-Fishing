@@ -42,15 +42,15 @@ polygon = PackedVector2Array(1650, 50, 1900, 50, 1900, 1065, 1650, 280)
 
 [node name="RegionTop" type="Node2D" parent="Regions" unique_id=1530564906]
 
-[node name="Paths" type="Node2D" parent="Regions/RegionTop"]
+[node name="Paths" type="Node2D" parent="Regions/RegionTop" unique_id=1702450404]
 
-[node name="PatrolLoopA" type="Path2D" parent="Regions/RegionTop/Paths"]
+[node name="PatrolLoopA" type="Path2D" parent="Regions/RegionTop/Paths" unique_id=1541033643]
 curve = SubResource("Curve2D_patrol_a")
 
-[node name="PatrolLoopB" type="Path2D" parent="Regions/RegionTop/Paths"]
+[node name="PatrolLoopB" type="Path2D" parent="Regions/RegionTop/Paths" unique_id=496413266]
 curve = SubResource("Curve2D_patrol_b")
 
-[node name="PatrolLoopC" type="Path2D" parent="Regions/RegionTop/Paths"]
+[node name="PatrolLoopC" type="Path2D" parent="Regions/RegionTop/Paths" unique_id=2074472541]
 curve = SubResource("Curve2D_patrol_c")
 
 [node name="RegionLeft" type="Node2D" parent="Regions" unique_id=2098905846]
@@ -70,7 +70,7 @@ position = Vector2(1900, 500)
 [node name="Whirlpool" parent="." unique_id=752153721 instance=ExtResource("4_whirlpool")]
 position = Vector2(1774, 1425)
 
-[node name="Target" parent="." instance=ExtResource("5_target")]
+[node name="Target" parent="." unique_id=1209072142 instance=ExtResource("5_target")]
 
 [node name="GameCamera" type="Camera2D" parent="." unique_id=1650231830]
 position = Vector2(1900, 500)
