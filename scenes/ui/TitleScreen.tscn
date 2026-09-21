@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bkrl62j4wn22y"]
 
 [ext_resource type="FontFile" uid="uid://bh3gopu38jx5q" path="res://assets/fonts/Special_Elite/SpecialElite-Regular.ttf" id="1_ny3vc"]
+[ext_resource type="Script" path="res://scripts/ui/title_screen.gd" id="2_title_screen"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ny3vc"]
 
@@ -16,6 +17,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 metadata/_edit_vertical_guides_ = [960.0]
+script = ExtResource("2_title_screen")
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=997035435]
 layout_mode = 1

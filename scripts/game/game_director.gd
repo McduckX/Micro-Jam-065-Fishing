@@ -46,6 +46,11 @@ signal cycle_started(cycle: CycleData)
 ## Replaces Pass 8's slice_completed now that there's more than one cycle —
 ## this only fires once, after Cycle 4's Leviathan is fed.
 signal game_won
+## Pass 13: emitted from handle_boat_died() — all three loss conditions
+## (timer expiry, lethal core, whirlpool pull-in) already funnel through
+## Boat._die() -> died -> handle_boat_died(), so this is the single choke
+## point Main needs to show the Game Over screen from.
+signal game_over
 ## Pass 10: emitted every frame while the timer is counting down (not a
 ## change-only signal like bait_changed/can_feed_changed, since this value
 ## changes continuously rather than as a discrete event — HUD.gd polls it
@@ -54,7 +59,10 @@ signal time_remaining_changed(time_remaining: float, drain_fraction: float)
 
 var run_state: RunState
 
-var control_mode: ControlMode.Mode = ControlMode.Mode.STEERING:
+## Pass 13: starts in INTRO, not STEERING — Title/Instructions play out over
+## the already-instanced, already-rendering game world (see main.gd), and
+## nothing here should move or count down until begin_run() is called.
+var control_mode: ControlMode.Mode = ControlMode.Mode.INTRO:
 	set(value):
 		if control_mode == value:
 			return
@@ -112,8 +120,11 @@ func _resolve_dependencies() -> void:
 func _process(delta: float) -> void:
 	# BETWEEN_CYCLE covers its own whirlpool/timer resets inside
 	# _advance_to_next_cycle() — nothing here should run concurrently with
-	# that sequence (see Pass 12's between-cycle sequence).
-	if _game_won or not _boat or not _whirlpool or control_mode == ControlMode.Mode.BETWEEN_CYCLE:
+	# that sequence (see Pass 12's between-cycle sequence). INTRO (Pass 13)
+	# is the same idea for the *start* of a run: Title/Instructions play out
+	# over an already-ticking world unless this is guarded too, which would
+	# drain the Cycle 1 timer before the player ever gets control.
+	if _game_won or not _boat or not _whirlpool or control_mode == ControlMode.Mode.BETWEEN_CYCLE or control_mode == ControlMode.Mode.INTRO:
 		return
 
 	# GameDesign.md §7: "the player cannot recover afterward" once the timer
@@ -153,11 +164,12 @@ func _unhandled_input(event: InputEvent) -> void:
 ## Boat connects its own `died` signal to this once it finds this director
 ## (same group-lookup pattern). Boat never writes control_mode itself —
 ## this stays the single writer, per the Risk 4 mitigation in the plan.
-## Pass 3 scope: placeholder freeze + print only; a real death sequence
-## (Game Over screen, restart) arrives in Pass 13.
+## Pass 13: now emits game_over so Main can show the real Game Over screen;
+## previously this was just a placeholder freeze + print.
 func handle_boat_died() -> void:
-	print("GameDirector: boat died (placeholder) — whirlpool consumed the player.")
+	print("GameDirector: boat died — whirlpool consumed the player.")
 	control_mode = ControlMode.Mode.LOCKED
+	game_over.emit()
 
 
 ## Pass 11: Target's deferred path-resolution calls this instead of using a
@@ -273,6 +285,16 @@ func handle_rhythm_finished(success: bool) -> void:
 		control_mode = ControlMode.Mode.CATCH_RESULT
 		catch_revealed.emit(run_state.current_bait)
 	elif control_mode == ControlMode.Mode.RHYTHM:
+		control_mode = ControlMode.Mode.STEERING
+
+
+## Pass 13: called by Main once InstructionScreen's reveal-fade finishes —
+## the moment gameplay actually starts. Guarded the same defensive way as
+## acknowledge_catch()/handle_line_cleared(): only ever reverts INTRO
+## specifically, so it can never fire twice or clobber a mode a fast player
+## input somehow already changed.
+func begin_run() -> void:
+	if control_mode == ControlMode.Mode.INTRO:
 		control_mode = ControlMode.Mode.STEERING
 
 

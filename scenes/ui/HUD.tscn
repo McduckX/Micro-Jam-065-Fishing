@@ -145,6 +145,33 @@ texture_progress_offset = Vector2(225, 57)
 visible = false
 layout_mode = 1
 
+[node name="ControlHints" type="VBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = 40.0
+offset_right = 200.0
+offset_bottom = 120.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PropelHintLabel" type="Label" parent="ControlHints"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Propel with W - S"
+horizontal_alignment = 1
+
+[node name="SteerHintLabel" type="Label" parent="ControlHints"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Steer with A - D"
+horizontal_alignment = 1
+
 [node name="DangerVignette" type="ColorRect" parent="." unique_id=933217660]
 material = SubResource("SubResource_1")
 layout_mode = 1

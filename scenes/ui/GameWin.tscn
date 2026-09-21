@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://dyli4faljqx1a"]
 
 [ext_resource type="FontFile" uid="uid://bh3gopu38jx5q" path="res://assets/fonts/Special_Elite/SpecialElite-Regular.ttf" id="1_mqtby"]
+[ext_resource type="Script" path="res://scripts/ui/end_screen.gd" id="2_end_screen"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ny3vc"]
 
@@ -9,6 +10,7 @@ bg_color = Color(0.60038817, 0.60038817, 0.60038817, 0)
 border_width_bottom = 5
 
 [node name="TitleScreen" type="Control" unique_id=226514322]
+visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -16,6 +18,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 metadata/_edit_vertical_guides_ = [960.0]
+script = ExtResource("2_end_screen")
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=997035435]
 layout_mode = 1

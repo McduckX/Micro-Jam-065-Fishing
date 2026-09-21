@@ -20,6 +20,10 @@ extends Control
 ## Pass 12: what the whirlpool currently wants — the second label types out
 ## the request bubble's monster name (see the UI flow's "Loop" description).
 @onready var _target_name_label: TypewriterLabel = $RequestBubble/TargetNameLabel
+## Pass 13: the "Propel with W - S" / "Steer with A - D" onboarding labels —
+## shown the first time control actually reaches STEERING (i.e. the instant
+## begin_run() fires), faded out the first time either control is used.
+@onready var _control_hints: Control = $ControlHints
 
 ## Warning vignette only starts climbing once a third of the timer remains
 ## (drain_fraction >= 2/3), and caps at half intensity rather than the
@@ -27,6 +31,12 @@ extends Control
 ## red right as the timer starts."
 const WARNING_START_DRAIN_FRACTION: float = 2.0 / 3.0
 const WARNING_MAX_INTENSITY: float = 0.5
+
+@export var control_hint_fade_duration: float = 0.4
+
+var _control_hints_shown_once: bool = false
+var _control_hints_fading: bool = false
+var _control_hints_fade_elapsed: float = 0.0
 
 
 func _ready() -> void:
@@ -46,6 +56,7 @@ func _resolve_dependencies() -> void:
 		director.game_won.connect(_on_game_won)
 		director.cycle_started.connect(_on_cycle_started)
 		director.time_remaining_changed.connect(_on_time_remaining_changed)
+		director.control_mode_changed.connect(_on_control_mode_changed)
 		# Read the starting value directly rather than relying on catching
 		# GameDirector's own deferred initial emit — both resolve on
 		# call_deferred(), and GameDirector's (queued from deeper in the
@@ -78,6 +89,40 @@ func _on_game_won() -> void:
 ## types out the new cycle's requested creature into the request bubble.
 func _on_cycle_started(cycle: CycleData) -> void:
 	_target_name_label.set_text_animated(cycle.chain.back().display_name.to_upper())
+
+
+## Pass 13: the very first time control reaches STEERING is exactly when
+## begin_run() fires (INTRO -> STEERING) — every later STEERING transition
+## (post-catch, post-cycle) is deliberately ignored via the shown-once flag,
+## since the hints are only ever meant to appear once, at the start.
+func _on_control_mode_changed(new_mode: ControlMode.Mode) -> void:
+	if new_mode == ControlMode.Mode.STEERING and not _control_hints_shown_once:
+		_control_hints_shown_once = true
+		_control_hints.visible = true
+		_control_hints.modulate.a = 1.0
+
+
+func _process(delta: float) -> void:
+	if not _control_hints.visible:
+		return
+	if not _control_hints_fading and _is_any_movement_input_pressed():
+		_control_hints_fading = true
+		_control_hints_fade_elapsed = 0.0
+	if _control_hints_fading:
+		_control_hints_fade_elapsed += delta
+		var t := clampf(_control_hints_fade_elapsed / control_hint_fade_duration, 0.0, 1.0)
+		_control_hints.modulate.a = 1.0 - t
+		if t >= 1.0:
+			_control_hints.visible = false
+
+
+func _is_any_movement_input_pressed() -> bool:
+	return (
+		Input.is_action_pressed("move_forward")
+		or Input.is_action_pressed("move_back")
+		or Input.is_action_pressed("turn_left")
+		or Input.is_action_pressed("turn_right")
+	)
 
 
 ## Pass 10 (GameDesign.md §7): drives both the hunger bar and the

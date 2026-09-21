@@ -11,6 +11,11 @@ class_name TypewriterLabel
 ## flow doesn't ask for the two directions to feel different.
 @export var seconds_per_character: float = 0.03
 
+## Pass 13: lets a caller (InstructionScreen's line sequencer) await the
+## animation actually reaching the target text instead of guessing a
+## duration — emitted once, when typing (not backspacing) completes.
+signal typing_finished
+
 var _target_text: String = ""
 var _phase: Phase = Phase.IDLE
 var _elapsed: float = 0.0
@@ -44,4 +49,5 @@ func _process(delta: float) -> void:
 				text = _target_text.substr(0, text.length() + 1)
 			else:
 				_phase = Phase.IDLE
+				typing_finished.emit()
 				return

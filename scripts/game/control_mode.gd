@@ -6,6 +6,7 @@
 class_name ControlMode
 
 enum Mode {
+	INTRO,         ## Pre-game: world exists but hasn't started. Input inert, timer/whirlpool frozen.
 	STEERING,      ## Boat responds to WASD; casting is available.
 	LINE_ACTIVE,   ## A line is cast; boat steering is disabled, momentum continues.
 	RHYTHM,        ## Rhythm sequence in progress; WASD drives rhythm lanes only.
