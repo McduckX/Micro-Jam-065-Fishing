@@ -125,6 +125,8 @@ horizontal_alignment = 1
 
 [node name="NoteLayer" type="Node2D" parent="." unique_id=229872407]
 
+[node name="MotifPlayer" type="AudioStreamPlayer" parent="."]
+
 [node name="CountdownLabel" type="Label" parent="." unique_id=2072460525]
 layout_mode = 0
 offset_left = 860.0

@@ -72,6 +72,16 @@ signal sequence_finished(success: bool)
 @onready var _countdown_label: Label = $CountdownLabel
 @onready var _result_label: Label = $ResultLabel
 @onready var _note_layer: Node2D = $NoteLayer
+@onready var _motif_player: AudioStreamPlayer = $MotifPlayer
+
+## Seconds into PLAYING (i.e. _elapsed) at which its pattern's audio actually
+## starts. The motif resources were authored with every note.time already
+## carrying a +1s lead-in baked in for exactly this — the audio's own beat
+## for a given note sits at (note.time - AUDIO_START_DELAY) into the clip —
+## so this must stay driven off the same _elapsed clock notes are judged
+## against, not off wall-clock time from start_sequence() (that would start
+## the audio during COUNTDOWN, before _elapsed even begins counting).
+const AUDIO_START_DELAY: float = 1.0
 
 var _state: State = State.IDLE
 var _max_mistakes: int = 0
@@ -80,6 +90,8 @@ var _elapsed: float = 0.0
 var _countdown_remaining: float = 0.0
 var _note_states: Array[Dictionary] = []  ## {note, judged, success, press_registered, flash_time}
 var _last_note_end: float = 0.0
+var _pending_audio: AudioStream = null
+var _audio_started: bool = false
 
 
 func _ready() -> void:
@@ -135,6 +147,10 @@ func start_sequence(pattern: RhythmPattern, max_mistakes: int) -> void:
 	_result_label.visible = false
 	_countdown_label.visible = true
 
+	_motif_player.stop()
+	_pending_audio = pattern.audio
+	_audio_started = false
+
 
 func _process(delta: float) -> void:
 	match _state:
@@ -146,6 +162,10 @@ func _process(delta: float) -> void:
 				_countdown_label.visible = false
 		State.PLAYING:
 			_elapsed += delta
+			if not _audio_started and _pending_audio and _elapsed >= AUDIO_START_DELAY:
+				_audio_started = true
+				_motif_player.stream = _pending_audio
+				_motif_player.play()
 			_judge_timeouts()
 			_update_visuals()
 			if _elapsed > _last_note_end + window_seconds:

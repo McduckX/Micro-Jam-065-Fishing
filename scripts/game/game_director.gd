@@ -11,6 +11,21 @@ extends Node
 ## between-cycle sequence make advancing through more than one real.
 @export var cycles: Array[CycleData] = []
 
+## Temporary patch (Pass 15): per-creature rhythm phrases aren't authored
+## yet, so every hook attempt draws a random pattern from this pool instead
+## of reading the target's own assigned TargetData.rhythm_pattern — see
+## handle_hook_attempted(). Applies uniformly, including final creatures
+## (Kraken, etc.). Remove this pool and revert to target.get_rhythm_pattern()
+## once real per-creature phrases exist.
+@export var motif_patterns: Array[RhythmPattern] = []
+
+## Temporary patch (Pass 15), same reasoning as motif_patterns above: every
+## hook attempt allows this many mistakes instead of reading the target's
+## own get_max_mistakes() (0 for intermediates, 1 for finals per
+## GameDesign.md §11). Revert to target.get_max_mistakes() alongside
+## motif_patterns once this patch is removed.
+@export var max_mistakes_override: int = 3
+
 ## Which entry of `cycles` is currently active.
 var cycle_index: int = 0
 
@@ -233,30 +248,33 @@ func handle_line_cleared() -> void:
 ## GameDirector holding a direct reference to it, keeping the two decoupled
 ## via signals like everything else in this architecture.
 ##
-## Pass 9: the pattern/mistake-allowance are no longer a single hardcoded
-## pair — they're read from whichever creature is actually being hooked
-## (Target and FinalCreature both expose get_rhythm_pattern()/
+## Pass 9: max_mistakes was originally read from whichever creature is
+## actually being hooked (Target and FinalCreature both expose
 ## get_max_mistakes(), the same "small clean method" convention as
-## get_hook_position()/set_hook_ready()).
+## get_hook_position()/set_hook_ready()) — see max_mistakes_override's doc
+## comment for why that's currently bypassed.
+##
+## Pass 15 (temporary patch): the pattern itself is NOT read from the
+## target's assigned TargetData.rhythm_pattern anymore — see motif_patterns'
+## doc comment above. get_rhythm_pattern() is left in place on Target/
+## FinalCreature for when this patch is reverted.
 func handle_hook_attempted() -> void:
 	if control_mode != ControlMode.Mode.LINE_ACTIVE:
 		return
 	control_mode = ControlMode.Mode.RHYTHM
 
 	var target := get_tree().get_first_node_in_group("active_target")
-	var pattern: RhythmPattern = null
-	var max_mistakes := 0
-	if target:
+	if target and target.has_method("cancel_hookable_timeout"):
 		# The player made it in time — stop Target's own hookable_timeout
 		# countdown so it can't flee() out from under this attempt. Only
 		# Target has this method (FinalCreature has no timeout to cancel).
-		if target.has_method("cancel_hookable_timeout"):
-			target.cancel_hookable_timeout()
-		if target.has_method("get_rhythm_pattern"):
-			pattern = target.get_rhythm_pattern()
-			max_mistakes = target.get_max_mistakes()
+		target.cancel_hookable_timeout()
 
-	rhythm_requested.emit(pattern, max_mistakes)
+	var pattern: RhythmPattern = null
+	if motif_patterns.size() > 0:
+		pattern = motif_patterns[randi() % motif_patterns.size()]
+
+	rhythm_requested.emit(pattern, max_mistakes_override)
 
 
 ## RhythmUI connects its own sequence_finished signal to this. Pass 8:

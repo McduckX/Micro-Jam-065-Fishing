@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/WorldScene.tscn" id="1"]
 [ext_resource type="Script" path="res://scripts/game/game_director.gd" id="2"]
@@ -7,11 +7,20 @@
 [ext_resource type="Resource" path="res://resources/cycles/cycle_3.tres" id="5"]
 [ext_resource type="Resource" path="res://resources/cycles/cycle_4.tres" id="6"]
 [ext_resource type="Script" path="res://scripts/data/cycle_data.gd" id="7"]
+[ext_resource type="Resource" uid="uid://r4blb5r4nje5" path="res://resources/rhythm/motif1.tres" id="8_motif1"]
+[ext_resource type="Resource" uid="uid://ckoxwvatjy0x8" path="res://resources/rhythm/motif2.tres" id="9_motif2"]
+[ext_resource type="Resource" uid="uid://cef080x4n6w05" path="res://resources/rhythm/motif3.tres" id="10_motif3"]
+[ext_resource type="Resource" uid="uid://ddv4d6vgf55ps" path="res://resources/rhythm/motif4.tres" id="11_motif4"]
+[ext_resource type="Resource" uid="uid://w4nfmakjfo8h" path="res://resources/rhythm/motif5.tres" id="12_motif5"]
+[ext_resource type="Resource" uid="uid://bbhmyl4dueowe" path="res://resources/rhythm/motif6.tres" id="13_motif6"]
+[ext_resource type="Resource" uid="uid://dmphj0qi34kv" path="res://resources/rhythm/motif15.tres" id="14_motif15"]
+[ext_resource type="Script" uid="uid://2po5dhekbuev" path="res://scripts/data/rhythm_pattern.gd" id="15_rhythm_pattern"]
 
 [node name="Game" type="Node"]
 
 [node name="GameDirector" type="Node" parent="."]
 script = ExtResource("2")
 cycles = Array[ExtResource("7")]([ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6")])
+motif_patterns = Array[ExtResource("15_rhythm_pattern")]([ExtResource("8_motif1"), ExtResource("9_motif2"), ExtResource("10_motif3"), ExtResource("11_motif4"), ExtResource("12_motif5"), ExtResource("13_motif6"), ExtResource("14_motif15")])
 
 [node name="World" parent="." instance=ExtResource("1")]

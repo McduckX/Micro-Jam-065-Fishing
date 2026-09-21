@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://dot6a7u85q70o" path="res://assets/resized/ui_fishing_rod.png" id="13_6bi52"]
 [ext_resource type="Texture2D" uid="uid://5as627v8avta" path="res://assets/Map/whirlpool.png" id="14_e8r00"]
 [ext_resource type="Texture2D" uid="uid://dry3ggs7q1em0" path="res://assets/resized/ui_wanted_poster.png" id="15_4wy6o"]
+[ext_resource type="Shader" uid="uid://daa7itgn7wehh" path="res://shaders/silhouette.gdshader" id="16_silhouette"]
 
 [sub_resource type="ShaderMaterial" id="SubResource_1"]
 shader = ExtResource("8_vignette")
@@ -22,6 +23,10 @@ shader_parameter/vignette_color = Color(0.7, 0, 0, 0.85)
 shader_parameter/intensity = 0.0
 shader_parameter/vignette_reach = 0.12
 shader_parameter/vignette_softness = 0.28
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_next_target_silhouette"]
+shader = ExtResource("16_silhouette")
+shader_parameter/shadow_color = Color(0.05, 0.05, 0.05, 1)
 
 [node name="HUD" type="Control" unique_id=344383103]
 layout_mode = 3
@@ -243,6 +248,7 @@ texture = ExtResource("15_4wy6o")
 stretch_mode = 3
 
 [node name="NextTargeticon" type="TextureRect" parent="NextTargetBackgroundPanel" unique_id=1081509281]
+material = SubResource("ShaderMaterial_next_target_silhouette")
 custom_minimum_size = Vector2(149, 210)
 layout_mode = 1
 anchors_preset = 8

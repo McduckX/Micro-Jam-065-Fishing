@@ -12,7 +12,9 @@
 [ext_resource type="Resource" path="res://resources/targets/scylla.tres" id="11_scylla_data"]
 [ext_resource type="Texture2D" uid="uid://boacoohx2xuh6" path="res://assets/Map/map_land.png" id="12_au30p"]
 [ext_resource type="Resource" path="res://resources/targets/umibozu.tres" id="12_umibozu_data"]
+[ext_resource type="Texture2D" uid="uid://d2es55ir7ga1m" path="res://assets/Map/map_forgroundDetails.png" id="13_c74fv"]
 [ext_resource type="Resource" path="res://resources/targets/leviathan.tres" id="13_leviathan_data"]
+[ext_resource type="Texture2D" uid="uid://6essm0v15pnu" path="res://assets/Map/map_Monsters.png" id="14_wrbgt"]
 
 [sub_resource type="Curve2D" id="Curve2D_patrol_a"]
 _data = {
@@ -359,6 +361,14 @@ position = Vector2(1900, 500)
 [node name="Foreground" type="Sprite2D" parent="." unique_id=1897469930]
 position = Vector2(1762, 1553)
 texture = ExtResource("12_au30p")
+
+[node name="Foreground2" type="Sprite2D" parent="." unique_id=795198118]
+position = Vector2(1762, 1553)
+texture = ExtResource("13_c74fv")
+
+[node name="Foreground3" type="Sprite2D" parent="." unique_id=2044967599]
+position = Vector2(1762, 1553)
+texture = ExtResource("14_wrbgt")
 
 [node name="GameCamera" type="Camera2D" parent="." unique_id=1650231830]
 position = Vector2(1900, 500)

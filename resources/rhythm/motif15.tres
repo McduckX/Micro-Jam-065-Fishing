@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b012mn6lwtits" path="res://scripts/data/rhythm_note.gd" id="1_swx6b"]
 [ext_resource type="Script" uid="uid://2po5dhekbuev" path="res://scripts/data/rhythm_pattern.gd" id="2_embg2"]
+[ext_resource type="AudioStream" uid="uid://bpq6re8jfl5e6" path="res://assets/audio/motifs_A15.wav" id="3_audio"]
 
 [sub_resource type="Resource" id="Note_1"]
 script = ExtResource("1_swx6b")
@@ -42,4 +43,5 @@ metadata/_custom_type_script = "uid://b012mn6lwtits"
 
 [resource]
 script = ExtResource("2_embg2")
+audio = ExtResource("3_audio")
 notes = Array[ExtResource("1_swx6b")]([SubResource("Note_1"), SubResource("Note_2"), SubResource("Note_3"), SubResource("Note_4"), SubResource("Resource_h2wpx"), SubResource("Resource_sief7")])
