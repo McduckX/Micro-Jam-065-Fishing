@@ -47,12 +47,6 @@ enum State { PATROL, APPROACHING, FLEEING_AWAY, RETURNING }
 ## represents — see target_data.gd. Must be set before this enters the
 ## tree (GameDirector sets it right after instantiate(), before add_child()).
 @export var data: TargetData
-## Region root (e.g. RegionTop) this target patrols within. Its "Paths"
-## child's Path2D children are the eligible routes — see PathRegistry. This
-## stays a Target-level scene default rather than TargetData, since it's
-## about scene structure (where to look), not creature identity.
-@export var region_path: NodePath = NodePath("../Regions/RegionTop")
-
 var _path: Path2D
 var _offset: float = 0.0
 var _state: State = State.PATROL
@@ -88,14 +82,24 @@ func _ready() -> void:
 	shape.radius = data.detection_radius
 	$CollisionShape2D.shape = shape
 
-	var region := get_node_or_null(region_path) as Node2D
-	if not region:
-		push_warning("Target: region_path did not resolve to a node; target will not move.")
+	# Deferred rather than resolved inline — GameDirector (which owns which
+	# regions are unlocked) may live in a different branch of the tree than
+	# this Target, so it needs the same deferred group-lookup pattern
+	# Boat/HUD/etc. already use, not a plain sibling NodePath.
+	call_deferred("_resolve_path")
+
+
+## GameDesign.md §9: "a target randomly selects an eligible path from the
+## currently unlocked regions."
+func _resolve_path() -> void:
+	var director := get_tree().get_first_node_in_group("game_director")
+	if not director:
+		push_warning("Target: no node in group 'game_director' found; target will not move.")
 		return
 
-	_path = PathRegistry.pick_random_path([region])
+	_path = PathRegistry.pick_random_path(director.get_unlocked_regions())
 	if not _path:
-		push_warning("Target: no eligible Path2D found under '%s/Paths'; target will not move." % region.name)
+		push_warning("Target: no eligible Path2D found under any unlocked region; target will not move.")
 		return
 
 	_update_transform()

@@ -6,10 +6,10 @@ class_name PathRegistry
 ## No state to own, so this is a plain static-function class rather than a
 ## Node — a scene/instance for it would be an unnecessary abstraction.
 ##
-## Pass 4 scope: called with a single hardcoded region (no unlocked-region
-## tracking exists yet — that arrives in Pass 11). Each region root is
+## Each region root (a RegionGate instance — see region_gate.gd) is
 ## expected to have a child named "Paths" whose children are the eligible
-## Path2D nodes for that region.
+## Path2D nodes for that region. Callers pass every currently unlocked
+## region (GameDirector.get_unlocked_regions()), not a single hardcoded one.
 
 
 ## Gathers every Path2D under `region.get_node("Paths")` for each region in

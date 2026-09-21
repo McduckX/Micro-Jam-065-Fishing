@@ -121,6 +121,20 @@ func handle_boat_died() -> void:
 	control_mode = ControlMode.Mode.LOCKED
 
 
+## Pass 11: Target's deferred path-resolution calls this instead of using a
+## hardcoded region NodePath — GameDesign.md §9 ("a target randomly selects
+## an eligible path from the currently unlocked regions"). No caching and no
+## ordering hazard to manage: RegionGates register into the "region_gate"
+## group in their own non-deferred _ready(), so by the time anything's
+## *deferred* call reaches here, every gate already exists in the group.
+func get_unlocked_regions() -> Array[Node2D]:
+	var result: Array[Node2D] = []
+	for gate in get_tree().get_nodes_in_group("region_gate"):
+		if gate.is_unlocked:
+			result.append(gate)
+	return result
+
+
 ## Called once time_remaining first reaches zero. GameDesign.md §7: "an
 ## active rhythm sequence may finish" — so a RHYTHM sequence in progress is
 ## left alone here; handle_rhythm_finished() checks _expired itself once
