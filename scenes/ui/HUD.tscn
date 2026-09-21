@@ -4,13 +4,15 @@
 [ext_resource type="Script" uid="uid://cyg0poulrqnnv" path="res://scripts/ui/compass.gd" id="2"]
 [ext_resource type="Texture2D" uid="uid://dtyss50b1xnww" path="res://assets/temp/temp_compass_ring.png" id="3"]
 [ext_resource type="Texture2D" uid="uid://c8l6ovidr28t5" path="res://assets/temp/temp_compass_arrow.png" id="4"]
+[ext_resource type="FontFile" uid="uid://bh3gopu38jx5q" path="res://assets/fonts/Special_Elite/SpecialElite-Regular.ttf" id="5_38nk3"]
 [ext_resource type="Texture2D" uid="uid://dyg1mrae10gsn" path="res://assets/temp/temp_hunger_bar_background.png" id="6_jlufg"]
-[ext_resource type="Texture2D" uid="uid://obykx73mk02q" path="res://assets/temp/temp_hud_bait_panel_background.png" id="6_rnyu1"]
 [ext_resource type="Texture2D" uid="uid://cdn6ypjyvbuna" path="res://assets/temp/temp_hunger_fill.png" id="7_l20r4"]
+[ext_resource type="Texture2D" uid="uid://i28gb3e1m3mg" path="res://assets/bait/ui_baitBox.png" id="8_6bi52"]
 [ext_resource type="Shader" uid="uid://bd6w6lwgnd4f8" path="res://shaders/danger_vignette.gdshader" id="8_vignette"]
 [ext_resource type="Script" uid="uid://c5kw18dvhb2j8" path="res://scripts/ui/typewriter_label.gd" id="9_typewriter"]
 [ext_resource type="PackedScene" uid="uid://j1ldt7gd27un" path="res://scenes/ui/WantedPoster.tscn" id="10_wanted_poster"]
 [ext_resource type="Texture2D" uid="uid://cp58k03w7u0vg" path="res://assets/temp/temp_request_bubble_background.png" id="11_request_bubble"]
+[ext_resource type="Texture2D" uid="uid://cq6ensefmk5jc" path="res://assets/bait/ui_fishingpole.png" id="13_6bi52"]
 
 [sub_resource type="ShaderMaterial" id="SubResource_1"]
 shader = ExtResource("8_vignette")
@@ -41,12 +43,14 @@ texture = ExtResource("4")
 
 [node name="BaitLabel" type="Label" parent="." unique_id=1002303817]
 layout_mode = 0
-offset_left = 202.0
-offset_top = 993.0
-offset_right = 502.0
-offset_bottom = 1027.0
-theme_override_font_sizes/font_size = 24
+offset_left = 220.0
+offset_top = 1038.0
+offset_right = 520.0
+offset_bottom = 1072.0
+theme_override_fonts/font = ExtResource("5_38nk3")
+theme_override_font_sizes/font_size = 28
 text = "Bait: —"
+vertical_alignment = 1
 
 [node name="FeedPromptLabel" type="Label" parent="." unique_id=102690976]
 layout_mode = 0
@@ -103,23 +107,25 @@ script = ExtResource("9_typewriter")
 
 [node name="BaitDisplayPanel" type="TextureRect" parent="." unique_id=78670384]
 layout_mode = 0
-offset_top = 914.0
-offset_right = 166.0
-offset_bottom = 1080.0
-texture = ExtResource("6_rnyu1")
+offset_left = 292.0
+offset_top = 791.00006
+offset_right = 660.0
+offset_bottom = 1147.0
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("8_6bi52")
 
 [node name="BaitIcon" type="TextureRect" parent="BaitDisplayPanel" unique_id=386463733]
 custom_minimum_size = Vector2(166, 166)
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -83.0
-offset_top = -83.0
-offset_right = 83.0
-offset_bottom = 83.0
+anchors_preset = -1
+anchor_left = 0.437
+anchor_top = 0.42000002
+anchor_right = 0.437
+anchor_bottom = 0.42000002
+offset_left = -83.14926
+offset_top = -82.85326
+offset_right = 82.85074
+offset_bottom = 83.14674
 grow_horizontal = 2
 grow_vertical = 2
 stretch_mode = 5
@@ -145,7 +151,7 @@ texture_progress_offset = Vector2(225, 57)
 visible = false
 layout_mode = 1
 
-[node name="ControlHints" type="VBoxContainer" parent="."]
+[node name="ControlHints" type="VBoxContainer" parent="." unique_id=1155245829]
 visible = false
 layout_mode = 1
 anchors_preset = 8
@@ -160,13 +166,13 @@ offset_bottom = 120.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PropelHintLabel" type="Label" parent="ControlHints"]
+[node name="PropelHintLabel" type="Label" parent="ControlHints" unique_id=1876080374]
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "Propel with W - S"
 horizontal_alignment = 1
 
-[node name="SteerHintLabel" type="Label" parent="ControlHints"]
+[node name="SteerHintLabel" type="Label" parent="ControlHints" unique_id=1383893973]
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "Steer with A - D"
@@ -181,3 +187,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="Foreground1" type="TextureRect" parent="." unique_id=514867428]
+layout_mode = 0
+offset_top = 714.0
+offset_right = 403.0
+offset_bottom = 1324.0
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("13_6bi52")
