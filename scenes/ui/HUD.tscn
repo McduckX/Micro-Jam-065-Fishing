@@ -5,13 +5,13 @@
 [ext_resource type="Texture2D" uid="uid://dtyss50b1xnww" path="res://assets/temp/temp_compass_ring.png" id="3"]
 [ext_resource type="Texture2D" uid="uid://c8l6ovidr28t5" path="res://assets/temp/temp_compass_arrow.png" id="4"]
 [ext_resource type="FontFile" uid="uid://bh3gopu38jx5q" path="res://assets/fonts/Special_Elite/SpecialElite-Regular.ttf" id="5_38nk3"]
+[ext_resource type="Texture2D" uid="uid://cmq4xq2h8qn5o" path="res://assets/bait/ui_dialogueBox.png" id="6_6bi52"]
 [ext_resource type="Texture2D" uid="uid://dyg1mrae10gsn" path="res://assets/temp/temp_hunger_bar_background.png" id="6_jlufg"]
 [ext_resource type="Texture2D" uid="uid://cdn6ypjyvbuna" path="res://assets/temp/temp_hunger_fill.png" id="7_l20r4"]
 [ext_resource type="Texture2D" uid="uid://i28gb3e1m3mg" path="res://assets/bait/ui_baitBox.png" id="8_6bi52"]
 [ext_resource type="Shader" uid="uid://bd6w6lwgnd4f8" path="res://shaders/danger_vignette.gdshader" id="8_vignette"]
 [ext_resource type="Script" uid="uid://c5kw18dvhb2j8" path="res://scripts/ui/typewriter_label.gd" id="9_typewriter"]
 [ext_resource type="PackedScene" uid="uid://j1ldt7gd27un" path="res://scenes/ui/WantedPoster.tscn" id="10_wanted_poster"]
-[ext_resource type="Texture2D" uid="uid://cp58k03w7u0vg" path="res://assets/temp/temp_request_bubble_background.png" id="11_request_bubble"]
 [ext_resource type="Texture2D" uid="uid://cq6ensefmk5jc" path="res://assets/bait/ui_fishingpole.png" id="13_6bi52"]
 
 [sub_resource type="ShaderMaterial" id="SubResource_1"]
@@ -79,12 +79,13 @@ anchor_left = 0.5
 anchor_top = 0.093
 anchor_right = 0.5
 anchor_bottom = 0.093
-offset_left = -642.0
+offset_left = -612.0
 offset_top = -83.0
-offset_right = -342.0
-offset_bottom = 94.0
+offset_right = -268.0
+offset_bottom = 184.0
 grow_horizontal = 2
-texture = ExtResource("11_request_bubble")
+scale = Vector2(0.7, 0.7)
+texture = ExtResource("6_6bi52")
 stretch_mode = 3
 
 [node name="FeedMeLabel" type="Label" parent="RequestBubble" unique_id=408964843]
@@ -92,6 +93,7 @@ layout_mode = 0
 offset_top = 10.0
 offset_right = 300.0
 offset_bottom = 50.0
+theme_override_fonts/font = ExtResource("5_38nk3")
 theme_override_font_sizes/font_size = 22
 text = "FEED ME"
 horizontal_alignment = 1
