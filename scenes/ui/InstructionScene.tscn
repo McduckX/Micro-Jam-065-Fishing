@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://bqh6c6rj7gyt2"]
+
+[ext_resource type="FontFile" uid="uid://bh3gopu38jx5q" path="res://assets/fonts/Special_Elite/SpecialElite-Regular.ttf" id="1_engo3"]
+
+[node name="TitleScreen" type="Control" unique_id=226514322]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_vertical_guides_ = [960.0]
+
+[node name="Dimmer" type="ColorRect" parent="." unique_id=559146242]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.70000005)
+
+[node name="Title" type="Label" parent="." unique_id=1612852159]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -238.0
+offset_top = -25.5
+offset_right = 238.0
+offset_bottom = 25.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("1_engo3")
+theme_override_font_sizes/font_size = 50
+text = "--Placeholder--"
+vertical_alignment = 1

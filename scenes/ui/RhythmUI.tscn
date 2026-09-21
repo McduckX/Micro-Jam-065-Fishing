@@ -13,8 +13,10 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1")
 lane_spacing = 240.0
-window_seconds = 0.2
+hit_line_y = 880.0
+window_seconds = 0.25
 metadata/_edit_vertical_guides_ = [960.0, 1080.0, 1320.0, 840.0, 600.0]
+metadata/_edit_horizontal_guides_ = [879.0]
 
 [node name="Dimmer" type="ColorRect" parent="." unique_id=1844156543]
 layout_mode = 1

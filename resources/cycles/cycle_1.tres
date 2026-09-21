@@ -14,3 +14,4 @@
 script = ExtResource("1")
 starting_bait = ExtResource("3")
 chain = Array[ExtResource("2")]([ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7"), ExtResource("8"), ExtResource("9")])
+unlocks_region_name = &"RegionLeft"

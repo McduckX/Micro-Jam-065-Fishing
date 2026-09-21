@@ -1,0 +1,125 @@
+[gd_scene format=3 uid="uid://j1ldt7gd27un"]
+
+[ext_resource type="Script" uid="uid://cihkeiw7e24bh" path="res://scripts/ui/wanted_poster.gd" id="1"]
+[ext_resource type="Shader" uid="uid://daa7itgn7wehh" path="res://shaders/silhouette.gdshader" id="2"]
+[ext_resource type="Texture2D" uid="uid://bgkofn6etdtgc" path="res://assets/temp/temp_wanted_poster_frame.png" id="3"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_silhouette"]
+shader = ExtResource("2")
+shader_parameter/shadow_color = Color(0.05, 0.05, 0.05, 1)
+
+[node name="WantedPoster" type="Control" unique_id=1423308229]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1")
+
+[node name="Dimmer" type="ColorRect" parent="." unique_id=433782888]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="PosterFrame" type="TextureRect" parent="." unique_id=67312367]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -350.0
+offset_top = -450.0
+offset_right = 350.0
+offset_bottom = 450.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3")
+stretch_mode = 5
+
+[node name="TitleLabel" type="Label" parent="." unique_id=340886779]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -350.0
+offset_top = -420.0
+offset_right = 350.0
+offset_bottom = -370.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 40
+text = "CAUGHT"
+horizontal_alignment = 1
+
+[node name="ColorIcon" type="TextureRect" parent="." unique_id=778878362]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -150.0
+offset_right = 150.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 5
+
+[node name="ShadowIcon" type="TextureRect" parent="." unique_id=898974438]
+material = SubResource("ShaderMaterial_silhouette")
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -150.0
+offset_right = 150.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="." unique_id=149366835]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -350.0
+offset_top = 180.0
+offset_right = 350.0
+offset_bottom = 230.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+
+[node name="ContinueLabel" type="Label" parent="." unique_id=108584595]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -350.0
+offset_top = 380.0
+offset_right = 350.0
+offset_bottom = 420.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 22
+text = "Press to continue"
+horizontal_alignment = 1

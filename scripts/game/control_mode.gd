@@ -6,8 +6,10 @@
 class_name ControlMode
 
 enum Mode {
-	STEERING,    ## Boat responds to WASD; casting is available.
-	LINE_ACTIVE, ## A line is cast; boat steering is disabled, momentum continues.
-	RHYTHM,      ## Rhythm sequence in progress; WASD drives rhythm lanes only.
-	LOCKED,      ## Cutscenes, feeding, death, menus — no gameplay input accepted.
+	STEERING,      ## Boat responds to WASD; casting is available.
+	LINE_ACTIVE,   ## A line is cast; boat steering is disabled, momentum continues.
+	RHYTHM,        ## Rhythm sequence in progress; WASD drives rhythm lanes only.
+	CATCH_RESULT,  ## Wanted-poster catch reveal is showing; waiting on a continue click.
+	BETWEEN_CYCLE, ## Teleport/reset/unlock sequence running after a successful feed.
+	LOCKED,        ## Terminal states — death, victory — no gameplay input accepted.
 }

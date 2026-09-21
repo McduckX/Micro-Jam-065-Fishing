@@ -1,13 +1,17 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/WorldScene.tscn" id="1"]
 [ext_resource type="Script" path="res://scripts/game/game_director.gd" id="2"]
 [ext_resource type="Resource" path="res://resources/cycles/cycle_1.tres" id="3"]
+[ext_resource type="Resource" path="res://resources/cycles/cycle_2.tres" id="4"]
+[ext_resource type="Resource" path="res://resources/cycles/cycle_3.tres" id="5"]
+[ext_resource type="Resource" path="res://resources/cycles/cycle_4.tres" id="6"]
+[ext_resource type="Script" path="res://scripts/data/cycle_data.gd" id="7"]
 
 [node name="Game" type="Node"]
 
 [node name="GameDirector" type="Node" parent="."]
 script = ExtResource("2")
-cycle_data = ExtResource("3")
+cycles = Array[ExtResource("7")]([ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6")])
 
 [node name="World" parent="." instance=ExtResource("1")]

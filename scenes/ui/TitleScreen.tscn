@@ -1,0 +1,70 @@
+[gd_scene format=3 uid="uid://bkrl62j4wn22y"]
+
+[ext_resource type="FontFile" uid="uid://bh3gopu38jx5q" path="res://assets/fonts/Special_Elite/SpecialElite-Regular.ttf" id="1_ny3vc"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ny3vc"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bt6bf"]
+bg_color = Color(0.60038817, 0.60038817, 0.60038817, 0)
+border_width_bottom = 5
+
+[node name="TitleScreen" type="Control" unique_id=226514322]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_vertical_guides_ = [960.0]
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=997035435]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dimmer" type="ColorRect" parent="." unique_id=559146242]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.70000005)
+
+[node name="Title" type="Label" parent="." unique_id=1612852159]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.356
+anchor_right = 0.5
+anchor_bottom = 0.356
+offset_left = -286.0
+offset_top = -39.48001
+offset_right = 286.0
+offset_bottom = 38.51999
+theme_override_fonts/font = ExtResource("1_ny3vc")
+theme_override_font_sizes/font_size = 60
+text = "A Fisherman's Song"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlayButton" type="Button" parent="." unique_id=945295820]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.53000003
+anchor_right = 0.5
+anchor_bottom = 0.53000003
+offset_left = -45.0
+offset_top = -31.400024
+offset_right = 45.0
+offset_bottom = 31.599976
+theme_override_fonts/font = ExtResource("1_ny3vc")
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxEmpty_ny3vc")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_bt6bf")
+theme_override_styles/hover = SubResource("StyleBoxFlat_bt6bf")
+text = "Play"

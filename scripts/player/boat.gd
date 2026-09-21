@@ -55,6 +55,10 @@ var _control_mode: ControlMode.Mode = ControlMode.Mode.STEERING
 var _whirlpool: Whirlpool
 var _director: Node
 var _is_dead: bool = false
+## Resolved once in _ready() and kept for teleport_to_spawn() (Pass 12's
+## between-cycle sequence) — avoids re-resolving spawn_marker_path every
+## time a teleport is needed.
+var _spawn_marker: Node2D
 
 ## Pass 10 (GameDesign.md §7): true while GameDirector is pulling the boat
 ## into the whirlpool's centre after the cycle timer expires. A scripted
@@ -77,9 +81,9 @@ func _ready() -> void:
 	# no gravity (see the Pass 2 pre-implementation check in the plan).
 	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
 
-	var marker := get_node_or_null(spawn_marker_path) as Node2D
-	if marker:
-		global_position = marker.global_position
+	_spawn_marker = get_node_or_null(spawn_marker_path) as Node2D
+	if _spawn_marker:
+		global_position = _spawn_marker.global_position
 	else:
 		push_warning("Boat: spawn_marker_path did not resolve to a node; staying at its authored scene position.")
 
@@ -123,6 +127,18 @@ func begin_pulled_to_center(target_pos: Vector2, duration: float) -> void:
 	_expire_duration = max(duration, 0.001)
 	_expire_start_pos = global_position
 	_expire_target_pos = target_pos
+	speed = 0.0
+	velocity = Vector2.ZERO
+
+
+## Called by GameDirector's between-cycle sequence (Pass 12, GameDesign.md
+## §17 — "the player is teleported to the original spawn position"). An
+## instant snap, not a lerp: unlike the timer-expiry pull-in, this happens
+## while the whirlpool has already reset and nothing is chasing the boat
+## visually, so there is nothing worth animating.
+func teleport_to_spawn() -> void:
+	if _spawn_marker:
+		global_position = _spawn_marker.global_position
 	speed = 0.0
 	velocity = Vector2.ZERO
 

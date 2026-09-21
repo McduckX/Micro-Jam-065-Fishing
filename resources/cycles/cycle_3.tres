@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CycleData" format=3 uid="uid://cfqmwmnfl22w4"]
+
+[ext_resource type="Script" uid="uid://dpvvgrvrn5u66" path="res://scripts/data/cycle_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://0qx0bhf0hwhq" path="res://scripts/data/target_data.gd" id="2"]
+[ext_resource type="Resource" path="res://resources/targets/nickel.tres" id="3"]
+[ext_resource type="Resource" path="res://resources/targets/parking_meter.tres" id="4"]
+[ext_resource type="Resource" path="res://resources/targets/cars.tres" id="5"]
+[ext_resource type="Resource" path="res://resources/targets/oil.tres" id="6"]
+[ext_resource type="Resource" path="res://resources/targets/cauldron.tres" id="7"]
+[ext_resource type="Resource" path="res://resources/targets/ladle.tres" id="8"]
+[ext_resource type="Resource" path="res://resources/targets/umibozu.tres" id="9"]
+
+[resource]
+script = ExtResource("1")
+starting_bait = ExtResource("3")
+chain = Array[ExtResource("2")]([ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7"), ExtResource("8"), ExtResource("9")])
+timer_duration = 180.0
+unlocks_region_name = &"RegionRight"

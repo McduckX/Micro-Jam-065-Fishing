@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CycleData" format=3 uid="uid://dut7uglq2tj7x"]
+
+[ext_resource type="Script" uid="uid://dpvvgrvrn5u66" path="res://scripts/data/cycle_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://0qx0bhf0hwhq" path="res://scripts/data/target_data.gd" id="2"]
+[ext_resource type="Resource" path="res://resources/targets/bible.tres" id="3"]
+[ext_resource type="Resource" path="res://resources/targets/priest.tres" id="4"]
+[ext_resource type="Resource" path="res://resources/targets/cross.tres" id="5"]
+[ext_resource type="Resource" path="res://resources/targets/gold.tres" id="6"]
+[ext_resource type="Resource" path="res://resources/targets/pharaoh.tres" id="7"]
+[ext_resource type="Resource" path="res://resources/targets/library_of_babylon.tres" id="8"]
+[ext_resource type="Resource" path="res://resources/targets/greed.tres" id="9"]
+[ext_resource type="Resource" path="res://resources/targets/leviathan.tres" id="10"]
+
+[resource]
+script = ExtResource("1")
+starting_bait = ExtResource("3")
+chain = Array[ExtResource("2")]([ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7"), ExtResource("8"), ExtResource("9"), ExtResource("10")])
+timer_duration = 180.0

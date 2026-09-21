@@ -6,10 +6,13 @@ extends Node
 ## reloading Game.tscn, which recreates this node from scratch — see
 ## GameDesign.md §19 (Try Again must start a completely new run).
 ##
-## Pass 9: cycle/chain progress is now backed by a real CycleData resource
-## (see cycle_data.gd) instead of hardcoded test strings. Only one CycleData
-## slot for now — multi-cycle progression is Pass 12's job.
-@export var cycle_data: CycleData
+## Pass 12: one CycleData per cycle, in play order (Cycle 1..4). Replaces
+## Pass 9's single cycle_data slot now that region unlocking and the
+## between-cycle sequence make advancing through more than one real.
+@export var cycles: Array[CycleData] = []
+
+## Which entry of `cycles` is currently active.
+var cycle_index: int = 0
 
 ## Same "preload a known scene" idiom RhythmUI uses for RhythmNoteVisual.tscn
 ## — one fixed scene, no reason to make it an inspector slot.
@@ -21,11 +24,28 @@ const TARGET_SCENE: PackedScene = preload("res://scenes/fish/Target.tscn")
 ## lives here rather than on the resource.
 @export var expire_pull_duration: float = 2.0
 
+## Pass 12, GameDesign.md §17 beats: how long the "monster reacts" pause
+## lasts before the whirlpool/boat reset, and how long the boat sits at
+## spawn before the next region unlocks and control returns. Both plain
+## fixed presentation beats, same standing as expire_pull_duration above.
+@export var monster_reaction_pause: float = 0.5
+@export var between_cycle_pause_duration: float = 2.0
+
 signal control_mode_changed(new_mode: ControlMode.Mode)
 signal rhythm_requested(pattern: RhythmPattern, max_mistakes: int)
 signal bait_changed(bait: TargetData)
 signal can_feed_changed(can_feed: bool)
-signal slice_completed
+## Pass 12: emitted right after a successful catch (intermediate or a
+## cycle's final creature) — WantedPoster shows the reveal off this and
+## GameDirector holds control in CATCH_RESULT until it calls back via
+## acknowledge_catch().
+signal catch_revealed(caught: TargetData)
+## Pass 12: emitted once a new cycle's timer starts — HUD's request bubble
+## types out the new cycle's requested creature off this.
+signal cycle_started(cycle: CycleData)
+## Replaces Pass 8's slice_completed now that there's more than one cycle —
+## this only fires once, after Cycle 4's Leviathan is fed.
+signal game_won
 ## Pass 10: emitted every frame while the timer is counting down (not a
 ## change-only signal like bait_changed/can_feed_changed, since this value
 ## changes continuously rather than as a discrete event — HUD.gd polls it
@@ -54,14 +74,14 @@ var can_feed: bool = false:
 var _boat: Node2D
 var _whirlpool: Whirlpool
 var _fishing_line: Node
-var _slice_complete: bool = false
+var _game_won: bool = false
 
 ## Pass 10: counts down from cycle_data.timer_duration; GameDesign.md §7
 ## ("Hunger behavior"). Frozen once _expired is set — there's nothing left
 ## to count down to.
 var time_remaining: float = 0.0
 ## True from the instant the timer first reaches zero — GameDesign.md §7's
-## "the player cannot recover afterward." Distinct from _slice_complete
+## "the player cannot recover afterward." Distinct from _game_won
 ## (that's a win-condition freeze; this is a loss-condition one).
 var _expired: bool = false
 
@@ -72,8 +92,8 @@ func _ready() -> void:
 	# director once at its own _ready() via get_first_node_in_group(), so
 	# the wiring survives scene restructuring without manual re-linking.
 	add_to_group("game_director")
-	run_state = RunState.new(cycle_data.starting_bait, cycle_data.chain)
-	time_remaining = cycle_data.timer_duration
+	run_state = RunState.new(cycles[0].starting_bait, cycles[0].chain)
+	time_remaining = cycles[0].timer_duration
 	call_deferred("_resolve_dependencies")
 
 
@@ -90,14 +110,33 @@ func _resolve_dependencies() -> void:
 
 
 func _process(delta: float) -> void:
-	if _slice_complete or not _boat or not _whirlpool:
+	# BETWEEN_CYCLE covers its own whirlpool/timer resets inside
+	# _advance_to_next_cycle() — nothing here should run concurrently with
+	# that sequence (see Pass 12's between-cycle sequence).
+	if _game_won or not _boat or not _whirlpool or control_mode == ControlMode.Mode.BETWEEN_CYCLE:
 		return
+
+	# GameDesign.md §7: "the player cannot recover afterward" once the timer
+	# expires. Bugfix: this must come BEFORE can_feed is (re)computed, not
+	# after — feed_radius is deliberately larger than lethal_radius (so the
+	# feed prompt is reachable without dying), which means the scripted
+	# pull-in toward the whirlpool's centre sweeps the boat through the feed
+	# zone on its way to the core. Recomputing can_feed from live position
+	# during that sweep let a still-correct chain flip can_feed back to true
+	# mid-death, so pressing E raced GameDirector's own feed sequence against
+	# Boat's already-running pull-in/_die() — control_mode ping-ponged
+	# between BETWEEN_CYCLE and LOCKED and the boat ended up permanently
+	# frozen (_is_dead stuck true) with the run half-advanced. Once expired,
+	# feeding is off the table for good, so can_feed is forced false here and
+	# never recomputed again this run.
+	if _expired:
+		can_feed = false
+		return
+
 	can_feed = _whirlpool.is_within_feed_radius(_boat.global_position) and run_state.is_chain_complete()
 
-	if _expired:
-		return
 	time_remaining = max(time_remaining - delta, 0.0)
-	var drain_fraction := 1.0 - time_remaining / cycle_data.timer_duration
+	var drain_fraction := 1.0 - time_remaining / cycles[cycle_index].timer_duration
 	_whirlpool.growth_fraction = drain_fraction
 	time_remaining_changed.emit(time_remaining, drain_fraction)
 
@@ -225,7 +264,25 @@ func handle_rhythm_finished(success: bool) -> void:
 
 	if _expired:
 		_begin_pull_in()
+	elif success:
+		# Pass 12: hold on the wanted-poster catch reveal instead of handing
+		# control straight back — WantedPoster calls acknowledge_catch() once
+		# the player dismisses it, which is what actually restores STEERING.
+		# run_state.current_bait is exactly the thing just caught: _resolve_catch()
+		# advanced it above.
+		control_mode = ControlMode.Mode.CATCH_RESULT
+		catch_revealed.emit(run_state.current_bait)
 	elif control_mode == ControlMode.Mode.RHYTHM:
+		control_mode = ControlMode.Mode.STEERING
+
+
+## WantedPoster connects its own continue-click handling to call this once
+## the player dismisses the catch-reveal poster. Guarded the same way
+## handle_line_cleared() is: only ever reverts CATCH_RESULT specifically, so
+## it can never clobber a mode something else (e.g. a death) set in the
+## meantime.
+func acknowledge_catch() -> void:
+	if control_mode == ControlMode.Mode.CATCH_RESULT:
 		control_mode = ControlMode.Mode.STEERING
 
 
@@ -246,6 +303,18 @@ func _resolve_catch(target: Node) -> void:
 	if run_state.is_chain_complete():
 		return
 
+	_spawn_or_activate_next(parent)
+
+
+## Spawns (or activates, for a final creature) whatever run_state.chain
+## [run_state.index] currently points to — the next thing the player needs
+## to catch. Shared by _resolve_catch() (mid-chain: parent is whatever the
+## just-caught target's own parent was) and _advance_to_next_cycle() (a
+## brand-new cycle's first target has no predecessor to inherit a parent
+## from — every Target in this project is a direct child of WorldScene by
+## convention, starting from the one hardcoded Target already placed there
+## in the scene, so Boat's own parent is always the same node).
+func _spawn_or_activate_next(parent: Node) -> void:
 	var next_data: TargetData = run_state.chain[run_state.index]
 	if next_data.is_final_creature:
 		_activate_final_creature(next_data)
@@ -266,18 +335,97 @@ func _activate_final_creature(data: TargetData) -> void:
 ## Called by Boat before it would otherwise die at the whirlpool's lethal
 ## core — GameDesign.md §16: carrying the correct food converts the core
 ## into a successful delivery instead of a death. Returns false (and does
-## nothing) if the chain isn't complete, so Boat's own _die() still fires —
-## "wrong food is never automatically accepted."
+## nothing) only if the chain isn't complete, so Boat's own _die() still
+## fires — "wrong food is never automatically accepted."
+##
+## Pass 12 bugfix: while a feed's between-cycle sequence is already running
+## (or the game is already won), this must return true, not false. Boat
+## calls try_auto_feed() again on every physics frame it's still within
+## lethal_radius, which is true for the ~monster_reaction_pause seconds
+## before teleport_to_spawn() actually moves the boat away — returning false
+## during that window made Boat treat an already-successful feed as "wrong
+## food" and kill the player, permanently freezing _physics_process()
+## (Boat._is_dead never clears). Returning true here means "this is already
+## handled," matching what a true return already means for the very first
+## call that triggered the sequence.
 func try_auto_feed() -> bool:
-	if _slice_complete or not run_state.is_chain_complete():
+	if _game_won or control_mode == ControlMode.Mode.BETWEEN_CYCLE:
+		return true
+	if not run_state.is_chain_complete():
 		return false
 	_complete_feed()
 	return true
 
 
+## GameDesign.md §17 ("Between-Cycle Sequence"). Point 1 ("the requested food
+## is pulled into the monster") needs no code here: the final creature's node
+## was already queue_free()'d back when it was caught (_resolve_catch()
+## frees whatever was in "active_target" on any successful catch, finals
+## included) — by the time it's fed, it only exists as run_state's
+## current_bait TargetData, not a world node. E-press feeding
+## (_unhandled_input) and auto-feed at the core (try_auto_feed, called from
+## Boat) both land here — the sequence itself doesn't care which triggered it.
 func _complete_feed() -> void:
-	print("GameDirector: fed the whirlpool (placeholder) — slice complete.")
-	_slice_complete = true
+	# Defense in depth alongside _process()'s can_feed fix above: this is the
+	# one place both feeding paths (E-press and auto-feed-at-core) actually
+	# converge, so the "no recovery after the timer expires" rule is
+	# enforced here directly rather than relying solely on can_feed staying
+	# false. GameDesign.md §7's expiry sequence is already underway
+	# (control_mode is LOCKED, Boat is mid pull-in) and must not be
+	# interrupted by a feed succeeding out from under it.
+	if _expired:
+		return
+
 	can_feed = false
-	control_mode = ControlMode.Mode.LOCKED
-	slice_completed.emit()
+	control_mode = ControlMode.Mode.BETWEEN_CYCLE
+
+	if cycle_index >= cycles.size() - 1:
+		# Cycle 4's Leviathan — nothing left to advance to. The Victory
+		# screen is Pass 13's job; this pass only needs the signal to exist
+		# and control to stay locked so nothing else can fire afterward.
+		_game_won = true
+		control_mode = ControlMode.Mode.LOCKED
+		game_won.emit()
+		return
+
+	_advance_to_next_cycle()
+
+
+## The rest of GameDesign.md §17, in order: monster reacts, whirlpool and
+## timer reset, teleport, brief pause, next region unlocks, next request
+## granted, control returns. Runs as a plain awaited sequence rather than a
+## state machine — GameDirector already gates every other entry point
+## (feeding, hooking, ...) on control_mode, and BETWEEN_CYCLE is set before
+## this is called, so nothing else can run concurrently with it.
+func _advance_to_next_cycle() -> void:
+	print("GameDirector: monster reacts (placeholder) — cycle %d complete." % (cycle_index + 1))
+	await get_tree().create_timer(monster_reaction_pause).timeout
+
+	_whirlpool.growth_fraction = 0.0
+	if _boat and _boat.has_method("teleport_to_spawn"):
+		_boat.teleport_to_spawn()
+
+	await get_tree().create_timer(between_cycle_pause_duration).timeout
+
+	var unlock_name := cycles[cycle_index].unlocks_region_name
+	if unlock_name != "":
+		for gate in get_tree().get_nodes_in_group("region_gate"):
+			if gate.name == unlock_name:
+				gate.unlock()
+				break
+
+	cycle_index += 1
+	var next_cycle: CycleData = cycles[cycle_index]
+	run_state = RunState.new(next_cycle.starting_bait, next_cycle.chain)
+	time_remaining = next_cycle.timer_duration
+
+	# A fresh cycle's first chain entry has no just-caught predecessor to
+	# spawn it the way _resolve_catch() does mid-chain — without this, the
+	# next region unlocks but nothing ever appears to hook (the bug this
+	# comment is fixing).
+	if _boat:
+		_spawn_or_activate_next(_boat.get_parent())
+
+	bait_changed.emit(run_state.current_bait)
+	cycle_started.emit(next_cycle)
+	control_mode = ControlMode.Mode.STEERING
