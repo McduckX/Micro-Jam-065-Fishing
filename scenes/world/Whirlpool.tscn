@@ -1,11 +1,29 @@
 [gd_scene format=3 uid="uid://cjkpjtvm7vsy"]
 
 [ext_resource type="Script" uid="uid://cwjijnpylkn05" path="res://scripts/world/whirlpool.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://d1hwlgxkosr0n" path="res://assets/temp/temp_whirlpool.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://5as627v8avta" path="res://assets/Map/whirlpool.png" id="2_wa5ic"]
+[ext_resource type="Texture2D" uid="uid://ryxoyvr14ef6" path="res://assets/Map/map_1.png" id="3_7tll8"]
+[ext_resource type="Texture2D" uid="uid://dws4wptud7xys" path="res://assets/Map/map_2.png" id="4_x16wg"]
+[ext_resource type="Texture2D" uid="uid://di6qfg3x7ogqe" path="res://assets/Map/map_3.png" id="5_eqvk0"]
 
 [node name="Whirlpool" type="Node2D" unique_id=1023178713]
 script = ExtResource("1")
 feed_radius = 400.0
+ring_1_rotation_speed = 60.0
+ring_2_rotation_speed = 45.0
+ring_3_rotation_speed = 30.0
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1989250587]
-texture = ExtResource("2")
+[node name="WhirpoolMouthSprite" type="Sprite2D" parent="." unique_id=1989250587]
+texture = ExtResource("2_wa5ic")
+
+[node name="WhirlpoolRingVisual1" type="Sprite2D" parent="." unique_id=1204167084]
+texture = ExtResource("3_7tll8")
+offset = Vector2(0, 112)
+
+[node name="WhirlpoolRingVisual2" type="Sprite2D" parent="." unique_id=1009915875]
+texture = ExtResource("4_x16wg")
+offset = Vector2(0, 112)
+
+[node name="WhirlpoolRingVisual3" type="Sprite2D" parent="." unique_id=200267952]
+texture = ExtResource("5_eqvk0")
+offset = Vector2(0, 112)

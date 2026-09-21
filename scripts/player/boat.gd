@@ -50,6 +50,8 @@ class_name Boat
 
 signal died
 
+@onready var _sprite: AnimatedSprite2D = $Sprite2D
+
 var speed: float = 0.0  ## signed: positive forward, negative reverse
 var _control_mode: ControlMode.Mode = ControlMode.Mode.STEERING
 var _whirlpool: Whirlpool
@@ -129,6 +131,7 @@ func begin_pulled_to_center(target_pos: Vector2, duration: float) -> void:
 	_expire_target_pos = target_pos
 	speed = 0.0
 	velocity = Vector2.ZERO
+	_set_sprite_thrusting(false)
 
 
 ## Called by GameDirector's between-cycle sequence (Pass 12, GameDesign.md
@@ -240,6 +243,11 @@ func _handle_steering(delta: float) -> void:
 	rotation += Input.get_axis("turn_left", "turn_right") * rotation_speed * delta
 
 	var throttle := Input.get_axis("move_back", "move_forward")
+	# Sprite state mirrors input, not resulting speed — same "input-driven,
+	# not velocity-driven" idiom GameDesign.md §6 already uses for the flute
+	# propulsion loop's volume, so holding a thrust key always reads as
+	# "moving" even for the single frame before speed actually changes.
+	_set_sprite_thrusting(throttle != 0.0)
 	if throttle > 0.0:
 		speed = min(speed + acceleration * delta, max_forward_speed)
 	elif throttle < 0.0:
@@ -255,7 +263,21 @@ func _handle_steering(delta: float) -> void:
 func _apply_passive_drag(delta: float) -> void:
 	# Steering is disabled (line cast / rhythm / locked), but the boat still
 	# coasts to a stop under its own drag — it does not freeze mid-glide.
+	# WASD is never read outside STEERING, so there is no "thrusting" input
+	# to reflect here — always the default frame.
+	_set_sprite_thrusting(false)
 	_decay_speed_toward_zero(delta, passive_deceleration)
+
+
+## Switches the boat's AnimatedSprite2D between its "moving" (8-frame cycle)
+## and "default" (single frame) animations. Guarded on actually changing —
+## re-assigning `animation` every frame would restart playback from frame 0
+## each time rather than continuing the loop.
+func _set_sprite_thrusting(is_thrusting: bool) -> void:
+	var target_animation: StringName = &"moving" if is_thrusting else &"default"
+	if _sprite.animation != target_animation:
+		_sprite.animation = target_animation
+		_sprite.play()
 
 
 func _decay_speed_toward_zero(delta: float, rate: float) -> void:
