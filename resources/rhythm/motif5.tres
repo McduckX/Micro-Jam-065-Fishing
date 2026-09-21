@@ -39,4 +39,5 @@ metadata/_custom_type_script = "uid://b012mn6lwtits"
 
 [resource]
 script = ExtResource("2_2a5k3")
+audio = ExtResource("3_audio")
 notes = Array[ExtResource("1_sief7")]([SubResource("Note_1"), SubResource("Note_2"), SubResource("Note_3"), SubResource("Note_4"), SubResource("Resource_h2wpx"), SubResource("Resource_sief7")])
