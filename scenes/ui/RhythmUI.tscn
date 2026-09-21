@@ -2,6 +2,9 @@
 
 [ext_resource type="Script" uid="uid://ekgfnhoxjdfo" path="res://scripts/ui/rhythm_ui.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://0cd1yeva8bb2" path="res://assets/temp/temp_rhythm_ring.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://f504630ckgr7" path="res://assets/resized/bottom_ui 1.png" id="2_s7ycm"]
+[ext_resource type="Texture2D" uid="uid://byr121sjdoatc" path="res://assets/resized/bottom_ui_lever 1.png" id="3_igoxb"]
+[ext_resource type="FontFile" uid="uid://bh3gopu38jx5q" path="res://assets/fonts/Special_Elite/SpecialElite-Regular.ttf" id="4_igoxb"]
 
 [node name="RhythmUI" type="Control" unique_id=1607070273]
 layout_mode = 3
@@ -16,7 +19,7 @@ lane_spacing = 240.0
 hit_line_y = 880.0
 window_seconds = 0.25
 metadata/_edit_vertical_guides_ = [960.0, 1080.0, 1320.0, 840.0, 600.0]
-metadata/_edit_horizontal_guides_ = [879.0]
+metadata/_edit_horizontal_guides_ = [879.0, 1002.0]
 
 [node name="Dimmer" type="ColorRect" parent="." unique_id=1844156543]
 layout_mode = 1
@@ -26,6 +29,28 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.3)
+
+[node name="bottomui" type="TextureRect" parent="." unique_id=600381676]
+layout_mode = 0
+offset_left = 223.0
+offset_top = 809.0
+offset_right = 1564.0
+offset_bottom = 1047.0
+texture = ExtResource("2_s7ycm")
+
+[node name="bottomuihandle" type="TextureRect" parent="." unique_id=1699437975]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.165
+anchor_top = 0.808
+anchor_right = 0.165
+anchor_bottom = 0.808
+offset_left = -65.80002
+offset_top = -93.640015
+offset_right = 65.19998
+offset_bottom = 93.359985
+texture = ExtResource("3_igoxb")
+stretch_mode = 3
 
 [node name="Lanes" type="Node2D" parent="." unique_id=1574024149]
 position = Vector2(54, 0)
@@ -38,10 +63,12 @@ texture = ExtResource("2")
 
 [node name="KeyLabel" type="Label" parent="Lanes/LaneA" unique_id=1737590521]
 offset_left = -30.0
-offset_top = 70.0
+offset_top = 83.0
 offset_right = 30.0
-offset_bottom = 100.0
-theme_override_font_sizes/font_size = 28
+offset_bottom = 124.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_igoxb")
+theme_override_font_sizes/font_size = 40
 text = "A"
 horizontal_alignment = 1
 
@@ -53,10 +80,12 @@ texture = ExtResource("2")
 
 [node name="KeyLabel" type="Label" parent="Lanes/LaneS" unique_id=1914337537]
 offset_left = -30.0
-offset_top = 70.0
+offset_top = 83.0
 offset_right = 30.0
-offset_bottom = 100.0
-theme_override_font_sizes/font_size = 28
+offset_bottom = 124.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_igoxb")
+theme_override_font_sizes/font_size = 40
 text = "S"
 horizontal_alignment = 1
 
@@ -68,10 +97,12 @@ texture = ExtResource("2")
 
 [node name="KeyLabel" type="Label" parent="Lanes/LaneW" unique_id=1791932123]
 offset_left = -30.0
-offset_top = 70.0
+offset_top = 83.0
 offset_right = 30.0
-offset_bottom = 100.0
-theme_override_font_sizes/font_size = 28
+offset_bottom = 124.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_igoxb")
+theme_override_font_sizes/font_size = 40
 text = "W"
 horizontal_alignment = 1
 
@@ -83,10 +114,12 @@ texture = ExtResource("2")
 
 [node name="KeyLabel" type="Label" parent="Lanes/LaneD" unique_id=31823602]
 offset_left = -30.0
-offset_top = 70.0
+offset_top = 83.0
 offset_right = 30.0
-offset_bottom = 100.0
-theme_override_font_sizes/font_size = 28
+offset_bottom = 124.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_igoxb")
+theme_override_font_sizes/font_size = 40
 text = "D"
 horizontal_alignment = 1
 

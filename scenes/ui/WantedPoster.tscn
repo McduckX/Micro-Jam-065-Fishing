@@ -2,7 +2,8 @@
 
 [ext_resource type="Script" uid="uid://cihkeiw7e24bh" path="res://scripts/ui/wanted_poster.gd" id="1"]
 [ext_resource type="Shader" uid="uid://daa7itgn7wehh" path="res://shaders/silhouette.gdshader" id="2"]
-[ext_resource type="Texture2D" uid="uid://bgkofn6etdtgc" path="res://assets/temp/temp_wanted_poster_frame.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://dry3ggs7q1em0" path="res://assets/resized/ui_wanted_poster.png" id="2_vgnln"]
+[ext_resource type="FontFile" uid="uid://bh3gopu38jx5q" path="res://assets/fonts/Special_Elite/SpecialElite-Regular.ttf" id="3_vgnln"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_silhouette"]
 shader = ExtResource("2")
@@ -17,6 +18,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1")
+metadata/_edit_horizontal_guides_ = [794.0]
 
 [node name="Dimmer" type="ColorRect" parent="." unique_id=433782888]
 layout_mode = 1
@@ -34,13 +36,14 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -350.0
-offset_top = -450.0
-offset_right = 350.0
-offset_bottom = 450.0
+offset_left = -378.00006
+offset_top = -485.0
+offset_right = 322.0
+offset_bottom = 415.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3")
+scale = Vector2(1.1, 1.1)
+texture = ExtResource("2_vgnln")
 stretch_mode = 5
 
 [node name="TitleLabel" type="Label" parent="." unique_id=340886779]
@@ -50,43 +53,48 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -350.0
-offset_top = -420.0
-offset_right = 350.0
-offset_bottom = -370.0
+offset_left = -346.0
+offset_top = -413.0
+offset_right = 354.0
+offset_bottom = -337.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 40
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_vgnln")
+theme_override_font_sizes/font_size = 75
 text = "CAUGHT"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="ColorIcon" type="TextureRect" parent="." unique_id=778878362]
+custom_minimum_size = Vector2(469, 581)
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -150.0
-offset_top = -150.0
-offset_right = 150.0
-offset_bottom = 150.0
+anchors_preset = -1
+anchor_left = 0.499
+anchor_top = 0.46600002
+anchor_right = 0.499
+anchor_bottom = 0.46600002
+offset_left = -235.08002
+offset_top = -290.28003
+offset_right = 233.91998
+offset_bottom = 290.71997
 grow_horizontal = 2
 grow_vertical = 2
 stretch_mode = 5
 
 [node name="ShadowIcon" type="TextureRect" parent="." unique_id=898974438]
 material = SubResource("ShaderMaterial_silhouette")
+custom_minimum_size = Vector2(469, 581)
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 0.5
+anchor_top = 0.46600002
 anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -150.0
-offset_top = -150.0
-offset_right = 150.0
-offset_bottom = 150.0
+anchor_bottom = 0.46600002
+offset_left = -237.0
+offset_top = -290.28003
+offset_right = 232.0
+offset_bottom = 290.71997
 grow_horizontal = 2
 grow_vertical = 2
 stretch_mode = 5
@@ -99,13 +107,17 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -350.0
-offset_top = 180.0
+offset_top = 287.0
 offset_right = 350.0
-offset_bottom = 230.0
+offset_bottom = 337.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_vgnln")
+theme_override_font_sizes/font_size = 50
+text = "KRAKEN"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="ContinueLabel" type="Label" parent="." unique_id=108584595]
 layout_mode = 1
@@ -120,6 +132,8 @@ offset_right = 350.0
 offset_bottom = 420.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_vgnln")
+theme_override_font_sizes/font_size = 28
 text = "Press to continue"
 horizontal_alignment = 1

@@ -7,3 +7,8 @@ class_name RhythmPattern
 ## concatenation arrive in Pass 14.
 
 @export var notes: Array[RhythmNote] = []
+## Backing track for this phrase — RhythmUI starts it 1 second into the
+## sequence (see rhythm_ui.gd), not immediately, to land in sync with the
+## notes' authored timing. Optional: a pattern with no audio simply plays
+## silent (test_phrase/test_phrase_short have none).
+@export var audio: AudioStream

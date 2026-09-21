@@ -5,14 +5,16 @@
 [ext_resource type="Texture2D" uid="uid://dtyss50b1xnww" path="res://assets/temp/temp_compass_ring.png" id="3"]
 [ext_resource type="Texture2D" uid="uid://c8l6ovidr28t5" path="res://assets/temp/temp_compass_arrow.png" id="4"]
 [ext_resource type="FontFile" uid="uid://bh3gopu38jx5q" path="res://assets/fonts/Special_Elite/SpecialElite-Regular.ttf" id="5_38nk3"]
-[ext_resource type="Texture2D" uid="uid://cmq4xq2h8qn5o" path="res://assets/bait/ui_dialogueBox.png" id="6_6bi52"]
+[ext_resource type="Texture2D" uid="uid://dyqnioswvdofq" path="res://assets/resized/ui_dialogue.png" id="6_6bi52"]
 [ext_resource type="Texture2D" uid="uid://dyg1mrae10gsn" path="res://assets/temp/temp_hunger_bar_background.png" id="6_jlufg"]
 [ext_resource type="Texture2D" uid="uid://cdn6ypjyvbuna" path="res://assets/temp/temp_hunger_fill.png" id="7_l20r4"]
-[ext_resource type="Texture2D" uid="uid://i28gb3e1m3mg" path="res://assets/bait/ui_baitBox.png" id="8_6bi52"]
+[ext_resource type="Texture2D" uid="uid://ckx7ijglvpr2u" path="res://assets/resized/ui_bait_box.png" id="8_6bi52"]
 [ext_resource type="Shader" uid="uid://bd6w6lwgnd4f8" path="res://shaders/danger_vignette.gdshader" id="8_vignette"]
 [ext_resource type="Script" uid="uid://c5kw18dvhb2j8" path="res://scripts/ui/typewriter_label.gd" id="9_typewriter"]
 [ext_resource type="PackedScene" uid="uid://j1ldt7gd27un" path="res://scenes/ui/WantedPoster.tscn" id="10_wanted_poster"]
-[ext_resource type="Texture2D" uid="uid://cq6ensefmk5jc" path="res://assets/bait/ui_fishingpole.png" id="13_6bi52"]
+[ext_resource type="Texture2D" uid="uid://dot6a7u85q70o" path="res://assets/resized/ui_fishing_rod.png" id="13_6bi52"]
+[ext_resource type="Texture2D" uid="uid://5as627v8avta" path="res://assets/Map/whirlpool.png" id="14_e8r00"]
+[ext_resource type="Texture2D" uid="uid://dry3ggs7q1em0" path="res://assets/resized/ui_wanted_poster.png" id="15_4wy6o"]
 
 [sub_resource type="ShaderMaterial" id="SubResource_1"]
 shader = ExtResource("8_vignette")
@@ -75,24 +77,29 @@ horizontal_alignment = 1
 [node name="RequestBubble" type="TextureRect" parent="." unique_id=1196376942]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 0.093
-anchor_right = 0.5
-anchor_bottom = 0.093
-offset_left = -612.0
-offset_top = -83.0
-offset_right = -268.0
-offset_bottom = 184.0
+anchor_left = 0.25100002
+anchor_top = 0.096
+anchor_right = 0.25100002
+anchor_bottom = 0.096
+offset_left = -172.92004
+offset_top = -133.23999
+offset_right = 171.07996
+offset_bottom = 133.76001
 grow_horizontal = 2
-scale = Vector2(0.7, 0.7)
 texture = ExtResource("6_6bi52")
 stretch_mode = 3
 
 [node name="FeedMeLabel" type="Label" parent="RequestBubble" unique_id=408964843]
-layout_mode = 0
-offset_top = 72.85714
-offset_right = 217.14282
-offset_bottom = 115.0857
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.446
+anchor_top = 0.374
+anchor_right = 0.446
+anchor_bottom = 0.374
+offset_left = -108.423996
+offset_top = -21.000862
+offset_right = 108.71883
+offset_bottom = 21.2277
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("5_38nk3")
 theme_override_font_sizes/font_size = 22
@@ -101,22 +108,32 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="TargetNameLabel" type="Label" parent="RequestBubble" unique_id=691408582]
-layout_mode = 0
-offset_top = 60.0
-offset_right = 300.0
-offset_bottom = 100.0
-theme_override_font_sizes/font_size = 26
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.45100003
+anchor_top = 0.545
+anchor_right = 0.45100003
+anchor_bottom = 0.545
+offset_left = -81.14401
+offset_top = -14.514999
+offset_right = 80.85599
+offset_bottom = 14.485001
+theme_override_colors/font_color = Color(0.56940794, 0, 0, 1)
+theme_override_fonts/font = ExtResource("5_38nk3")
+theme_override_font_sizes/font_size = 28
+text = "KRAKEN"
 horizontal_alignment = 1
+vertical_alignment = 1
 script = ExtResource("9_typewriter")
 
 [node name="BaitDisplayPanel" type="TextureRect" parent="." unique_id=78670384]
 layout_mode = 0
-offset_left = 292.0
-offset_top = 791.00006
-offset_right = 660.0
-offset_bottom = 1147.0
-scale = Vector2(0.6, 0.6)
+offset_left = 267.0
+offset_top = 768.00006
+offset_right = 529.0
+offset_bottom = 1022.00006
 texture = ExtResource("8_6bi52")
+stretch_mode = 3
 
 [node name="BaitIcon" type="TextureRect" parent="BaitDisplayPanel" unique_id=386463733]
 custom_minimum_size = Vector2(166, 166)
@@ -192,10 +209,51 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Foreground1" type="TextureRect" parent="." unique_id=514867428]
+[node name="Rod" type="TextureRect" parent="." unique_id=514867428]
 layout_mode = 0
-offset_top = 714.0
-offset_right = 403.0
-offset_bottom = 1324.0
-scale = Vector2(0.6, 0.6)
+offset_left = 2.0
+offset_top = 724.0
+offset_right = 237.0
+offset_bottom = 1079.0
 texture = ExtResource("13_6bi52")
+stretch_mode = 3
+
+[node name="WhirlpoolIcon" type="TextureRect" parent="." unique_id=109148366]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.34500003
+anchor_top = 0.093
+anchor_right = 0.34500003
+anchor_bottom = 0.093
+offset_left = -152.40002
+offset_top = -129.44
+offset_right = 858.6
+offset_bottom = 734.56
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("14_e8r00")
+stretch_mode = 3
+
+[node name="NextTargetBackgroundPanel" type="TextureRect" parent="." unique_id=1620359652]
+layout_mode = 0
+offset_left = 1389.0
+offset_top = 807.0
+offset_right = 1598.0
+offset_bottom = 1058.0
+texture = ExtResource("15_4wy6o")
+stretch_mode = 3
+
+[node name="NextTargeticon" type="TextureRect" parent="NextTargetBackgroundPanel" unique_id=1081509281]
+custom_minimum_size = Vector2(149, 210)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -71.5
+offset_top = -107.5
+offset_right = 77.5
+offset_bottom = 102.5
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 5

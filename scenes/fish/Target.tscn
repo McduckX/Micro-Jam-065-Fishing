@@ -1,11 +1,16 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" uid="uid://bxn62qxt0s0x2" path="res://scripts/fish/target.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://xo4hsiwxl34h" path="res://assets/temp/temp_fish.png" id="2"]
 [ext_resource type="Resource" path="res://resources/targets/salmon.tres" id="3"]
+[ext_resource type="Shader" uid="uid://daa7itgn7wehh" path="res://shaders/silhouette.gdshader" id="4"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_detection"]
 radius = 220.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_silhouette"]
+shader = ExtResource("4")
+shader_parameter/shadow_color = Color(0.05, 0.05, 0.05, 1)
 
 [node name="Target" type="Area2D" unique_id=1574485944]
 collision_layer = 16
@@ -14,6 +19,7 @@ script = ExtResource("1")
 data = ExtResource("3")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=473301062]
+material = SubResource("ShaderMaterial_silhouette")
 texture = ExtResource("2")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=477722015]

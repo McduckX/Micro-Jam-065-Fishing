@@ -1,0 +1,45 @@
+[gd_resource type="Resource" script_class="RhythmPattern" format=3 uid="uid://dmphj0qi34kv"]
+
+[ext_resource type="Script" uid="uid://b012mn6lwtits" path="res://scripts/data/rhythm_note.gd" id="1_swx6b"]
+[ext_resource type="Script" uid="uid://2po5dhekbuev" path="res://scripts/data/rhythm_pattern.gd" id="2_embg2"]
+
+[sub_resource type="Resource" id="Note_1"]
+script = ExtResource("1_swx6b")
+time = 1.6
+
+[sub_resource type="Resource" id="Note_2"]
+script = ExtResource("1_swx6b")
+action = "rhythm_right"
+time = 1.8
+is_hold = true
+hold_duration = 0.8
+
+[sub_resource type="Resource" id="Note_3"]
+script = ExtResource("1_swx6b")
+action = "rhythm_down"
+time = 2.9
+
+[sub_resource type="Resource" id="Note_4"]
+script = ExtResource("1_swx6b")
+action = "rhythm_left"
+time = 3.2
+is_hold = true
+hold_duration = 0.8
+
+[sub_resource type="Resource" id="Resource_h2wpx"]
+script = ExtResource("1_swx6b")
+action = "rhythm_down"
+time = 4.3
+metadata/_custom_type_script = "uid://b012mn6lwtits"
+
+[sub_resource type="Resource" id="Resource_sief7"]
+script = ExtResource("1_swx6b")
+action = "rhythm_right"
+time = 4.6
+is_hold = true
+hold_duration = 0.7
+metadata/_custom_type_script = "uid://b012mn6lwtits"
+
+[resource]
+script = ExtResource("2_embg2")
+notes = Array[ExtResource("1_swx6b")]([SubResource("Note_1"), SubResource("Note_2"), SubResource("Note_3"), SubResource("Note_4"), SubResource("Resource_h2wpx"), SubResource("Resource_sief7")])

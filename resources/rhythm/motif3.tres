@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="RhythmPattern" format=3 uid="uid://cef080x4n6w05"]
+
+[ext_resource type="Script" uid="uid://b012mn6lwtits" path="res://scripts/data/rhythm_note.gd" id="1_h2wpx"]
+[ext_resource type="Script" uid="uid://2po5dhekbuev" path="res://scripts/data/rhythm_pattern.gd" id="2_l7ts3"]
+[ext_resource type="AudioStream" uid="uid://bn7rcoc537hfm" path="res://assets/audio/motifs_A03.wav" id="3_audio"]
+
+[sub_resource type="Resource" id="Note_1"]
+script = ExtResource("1_h2wpx")
+action = "rhythm_left"
+time = 1.2
+
+[sub_resource type="Resource" id="Note_2"]
+script = ExtResource("1_h2wpx")
+action = "rhythm_right"
+time = 1.5
+
+[sub_resource type="Resource" id="Note_3"]
+script = ExtResource("1_h2wpx")
+action = "rhythm_left"
+time = 1.7
+
+[sub_resource type="Resource" id="Note_4"]
+script = ExtResource("1_h2wpx")
+time = 1.9
+
+[sub_resource type="Resource" id="Resource_h2wpx"]
+script = ExtResource("1_h2wpx")
+action = "rhythm_left"
+time = 2.1
+metadata/_custom_type_script = "uid://b012mn6lwtits"
+
+[resource]
+script = ExtResource("2_l7ts3")
+audio = ExtResource("3_audio")
+notes = Array[ExtResource("1_h2wpx")]([SubResource("Note_1"), SubResource("Note_2"), SubResource("Note_3"), SubResource("Note_4"), SubResource("Resource_h2wpx")])

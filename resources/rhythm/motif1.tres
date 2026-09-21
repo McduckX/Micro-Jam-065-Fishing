@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="RhythmPattern" format=3 uid="uid://r4blb5r4nje5"]
+
+[ext_resource type="Script" uid="uid://b012mn6lwtits" path="res://scripts/data/rhythm_note.gd" id="1_c1qdd"]
+[ext_resource type="Script" uid="uid://2po5dhekbuev" path="res://scripts/data/rhythm_pattern.gd" id="2_1sjls"]
+[ext_resource type="AudioStream" uid="uid://c63wpqm35xbbn" path="res://assets/audio/motifs_A01.wav" id="3_audio"]
+
+[sub_resource type="Resource" id="Note_1"]
+script = ExtResource("1_c1qdd")
+action = "rhythm_right"
+time = 1.7
+is_hold = true
+hold_duration = 0.7
+
+[sub_resource type="Resource" id="Note_2"]
+script = ExtResource("1_c1qdd")
+action = "rhythm_left"
+time = 1.9
+
+[sub_resource type="Resource" id="Note_3"]
+script = ExtResource("1_c1qdd")
+time = 2.2
+
+[sub_resource type="Resource" id="Note_4"]
+script = ExtResource("1_c1qdd")
+action = "rhythm_left"
+time = 2.5
+
+[resource]
+script = ExtResource("2_1sjls")
+audio = ExtResource("3_audio")
+notes = Array[ExtResource("1_c1qdd")]([SubResource("Note_1"), SubResource("Note_2"), SubResource("Note_3"), SubResource("Note_4")])

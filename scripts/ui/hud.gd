@@ -24,6 +24,11 @@ extends Control
 ## shown the first time control actually reaches STEERING (i.e. the instant
 ## begin_run() fires), faded out the first time either control is used.
 @onready var _control_hints: Control = $ControlHints
+## Pass 15: silhouette preview of whichever creature is next in the chain —
+## the icon itself carries a permanent silhouette ShaderMaterial (see
+## HUD.tscn, same shader Target/FinalCreature's own Sprite2D use), so this
+## script only ever swaps its texture, never the shadow effect.
+@onready var _next_target_icon: TextureRect = $NextTargetBackgroundPanel/NextTargeticon
 
 ## Warning vignette only starts climbing once a third of the timer remains
 ## (drain_fraction >= 2/3), and caps at half intensity rather than the
@@ -57,11 +62,16 @@ func _resolve_dependencies() -> void:
 		director.cycle_started.connect(_on_cycle_started)
 		director.time_remaining_changed.connect(_on_time_remaining_changed)
 		director.control_mode_changed.connect(_on_control_mode_changed)
+		director.next_target_changed.connect(_on_next_target_changed)
 		# Read the starting value directly rather than relying on catching
 		# GameDirector's own deferred initial emit — both resolve on
 		# call_deferred(), and GameDirector's (queued from deeper in the
 		# tree) can run before HUD's connects, missing the emission.
 		_on_bait_changed(director.run_state.current_bait)
+		# Same direct-read reasoning as _on_bait_changed above, for the
+		# NextTarget icon's own starting value.
+		var run_state: RunState = director.run_state
+		_on_next_target_changed(null if run_state.is_chain_complete() else run_state.chain[run_state.index])
 		# Pass 12: Cycle 1's own request never fires cycle_started (that
 		# signal only accompanies an *advance* to a later cycle) — read it
 		# directly here so the bubble shows something from the very start.
@@ -74,6 +84,15 @@ func _resolve_dependencies() -> void:
 func _on_bait_changed(bait: TargetData) -> void:
 	_bait_label.text = "Bait: %s" % bait.display_name
 	_bait_icon.texture = bait.texture
+
+
+## Pass 15: null once the chain is complete (nothing left to hook before
+## feeding) — hides the icon rather than leaving it stuck on the last
+## creature's silhouette.
+func _on_next_target_changed(next_target: TargetData) -> void:
+	_next_target_icon.visible = next_target != null
+	if next_target:
+		_next_target_icon.texture = next_target.texture
 
 
 func _on_can_feed_changed(can_feed: bool) -> void:

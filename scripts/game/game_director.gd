@@ -43,6 +43,12 @@ signal catch_revealed(caught: TargetData)
 ## Pass 12: emitted once a new cycle's timer starts — HUD's request bubble
 ## types out the new cycle's requested creature off this.
 signal cycle_started(cycle: CycleData)
+## Whichever creature is now next in run_state.chain — i.e. whatever's
+## actually spawned/activated in the water this instant — or null once the
+## chain is complete (nothing left to hook before feeding). HUD's NextTarget
+## icon shows this in silhouette (see Target/FinalCreature's own Sprite2D
+## shader) so it previews the upcoming catch without spoiling the color art.
+signal next_target_changed(next_target: TargetData)
 ## Replaces Pass 8's slice_completed now that there's more than one cycle —
 ## this only fires once, after Cycle 4's Leviathan is fed.
 signal game_won
@@ -323,8 +329,10 @@ func _resolve_catch(target: Node) -> void:
 	bait_changed.emit(run_state.current_bait)
 
 	if run_state.is_chain_complete():
+		next_target_changed.emit(null)
 		return
 
+	next_target_changed.emit(run_state.chain[run_state.index])
 	_spawn_or_activate_next(parent)
 
 
@@ -449,5 +457,6 @@ func _advance_to_next_cycle() -> void:
 		_spawn_or_activate_next(_boat.get_parent())
 
 	bait_changed.emit(run_state.current_bait)
+	next_target_changed.emit(run_state.chain[run_state.index])
 	cycle_started.emit(next_cycle)
 	control_mode = ControlMode.Mode.STEERING

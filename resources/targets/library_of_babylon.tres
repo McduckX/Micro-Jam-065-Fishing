@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="TargetData" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/target_data.gd" id="1"]
-[ext_resource type="Texture2D" path="res://assets/temp/temp_fish.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://cbucfbhfi7hsn" path="res://assets/bait/bait_libraryofbabylon.png" id="2"]
 [ext_resource type="Resource" path="res://resources/rhythm/test_phrase_short.tres" id="3"]
 
 [resource]
