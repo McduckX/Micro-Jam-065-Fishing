@@ -2,12 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ci1w55qeb50v1"
-valid=false
+uid="uid://14hptu7jpveb"
+path="res://.godot/imported/ui_caught_panel.png-f681f581db35c38acdc947c3649d2457.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://ui/ui_caught_panel.png"
+dest_files=["res://.godot/imported/ui_caught_panel.png-f681f581db35c38acdc947c3649d2457.ctex"]
 
 [params]
 
