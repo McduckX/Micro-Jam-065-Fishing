@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bmkh4ggfwqo1w"]
 
-[ext_resource type="Texture2D" uid="uid://da0xvmqv1y2mt" path="res://assets/temp/Map_Canvas.png" id="1_y03mr"]
+[ext_resource type="Texture2D" uid="uid://cbqyh001shkxg" path="res://assets/Map/map_0.png" id="1_ijkiv"]
 [ext_resource type="PackedScene" uid="uid://bisiea6edsa0k" path="res://scenes/player/Boat.tscn" id="2_boat"]
 [ext_resource type="Script" uid="uid://dohribawximax" path="res://scripts/world/follow_camera.gd" id="3_cam"]
 [ext_resource type="PackedScene" uid="uid://cjkpjtvm7vsy" path="res://scenes/world/Whirlpool.tscn" id="4_whirlpool"]
@@ -89,7 +89,7 @@ point_count = 5
 
 [node name="Background" type="Sprite2D" parent="." unique_id=706776810]
 position = Vector2(1762, 1553)
-texture = ExtResource("1_y03mr")
+texture = ExtResource("1_ijkiv")
 
 [node name="Land" type="StaticBody2D" parent="." unique_id=1640488207]
 collision_layer = 2
@@ -104,7 +104,10 @@ polygon = PackedVector2Array(1650, 50, 1900, 50, 1900, 1065, 1650, 280)
 [node name="RegionTop" parent="Regions" unique_id=1530564906 instance=ExtResource("9_region_gate")]
 starts_unlocked = true
 
-[node name="TrueBoundary" parent="Regions/RegionTop/Cover" parent_id_path=PackedInt32Array(1530564906, 1067777465) index="0" unique_id=1453770287]
+[node name="Cover" parent="Regions/RegionTop" index="0" unique_id=1067777465]
+visible = false
+
+[node name="TrueBoundary" parent="Regions/RegionTop/Cover" index="0" unique_id=1453770287]
 polygon = PackedVector2Array(0, 0, 3524, 0, 1780, 1515)
 
 [node name="FogLayerA" parent="Regions/RegionTop/Cover/TrueBoundary" index="0" unique_id=1006481259]
@@ -113,7 +116,7 @@ offset_top = -60.0
 offset_right = 3584.0
 offset_bottom = 1575.0
 
-[node name="ExpandedBoundary" parent="Regions/RegionTop/Cover" parent_id_path=PackedInt32Array(1530564906, 1067777465) index="1" unique_id=2142029125]
+[node name="ExpandedBoundary" parent="Regions/RegionTop/Cover" index="1" unique_id=2142029125]
 polygon = PackedVector2Array(-267, -227, 3786, -227, 1780, 1515)
 
 [node name="FogLayerB" parent="Regions/RegionTop/Cover/ExpandedBoundary" index="0" unique_id=1938574201]
@@ -122,7 +125,10 @@ offset_top = -287.0
 offset_right = 3846.0
 offset_bottom = 1575.0
 
-[node name="Boundary" parent="Regions/RegionTop/Walls" parent_id_path=PackedInt32Array(1530564906, 464603622) index="0" unique_id=1805443851]
+[node name="Walls" parent="Regions/RegionTop" index="1" unique_id=464603622]
+visible = false
+
+[node name="Boundary" parent="Regions/RegionTop/Walls" index="0" unique_id=1805443851]
 polygon = PackedVector2Array(0, 0, 3524, 0, 1780, 1515)
 
 [node name="PatrolLoopA" type="Path2D" parent="Regions/RegionTop/Paths" parent_id_path=PackedInt32Array(1530564906, 359844037) index="0" unique_id=1541033643]
@@ -136,7 +142,10 @@ curve = SubResource("Curve2D_patrol_c")
 
 [node name="RegionLeft" parent="Regions" unique_id=2098905846 instance=ExtResource("9_region_gate")]
 
-[node name="TrueBoundary" parent="Regions/RegionLeft/Cover" parent_id_path=PackedInt32Array(2098905846, 1067777465) index="0" unique_id=1453770287]
+[node name="Cover" parent="Regions/RegionLeft" index="0" unique_id=1067777465]
+visible = false
+
+[node name="TrueBoundary" parent="Regions/RegionLeft/Cover" index="0" unique_id=1453770287]
 polygon = PackedVector2Array(0, 150, 1000, 700, 1780, 1515, 1600, 1900, 700, 2700, 0, 2650)
 
 [node name="FogLayerA" parent="Regions/RegionLeft/Cover/TrueBoundary" index="0" unique_id=1006481259]
@@ -145,7 +154,7 @@ offset_top = 90.0
 offset_right = 1840.0
 offset_bottom = 2760.0
 
-[node name="ExpandedBoundary" parent="Regions/RegionLeft/Cover" parent_id_path=PackedInt32Array(2098905846, 1067777465) index="1" unique_id=2142029125]
+[node name="ExpandedBoundary" parent="Regions/RegionLeft/Cover" index="1" unique_id=2142029125]
 polygon = PackedVector2Array(-267, -55, 883, 578, 1780, 1515, 1573, 1958, 538, 2878, -267, 2820)
 
 [node name="FogLayerB" parent="Regions/RegionLeft/Cover/ExpandedBoundary" index="0" unique_id=1938574201]
@@ -154,21 +163,27 @@ offset_top = -115.0
 offset_right = 1840.0
 offset_bottom = 2938.0
 
-[node name="Boundary" parent="Regions/RegionLeft/Walls" parent_id_path=PackedInt32Array(2098905846, 464603622) index="0" unique_id=1805443851]
+[node name="Walls" parent="Regions/RegionLeft" index="1" unique_id=464603622]
+visible = false
+
+[node name="Boundary" parent="Regions/RegionLeft/Walls" index="0" unique_id=1805443851]
 polygon = PackedVector2Array(0, 150, 1000, 700, 1780, 1515, 1600, 1900, 700, 2700, 0, 2650)
 
-[node name="PatrolLoopA" type="Path2D" parent="Regions/RegionLeft/Paths" parent_id_path=PackedInt32Array(2098905846, 359844037) index="0"]
+[node name="PatrolLoopA" type="Path2D" parent="Regions/RegionLeft/Paths" parent_id_path=PackedInt32Array(2098905846, 359844037) index="0" unique_id=1979706752]
 curve = SubResource("Curve2D_left_a")
 
-[node name="PatrolLoopB" type="Path2D" parent="Regions/RegionLeft/Paths" parent_id_path=PackedInt32Array(2098905846, 359844037) index="1"]
+[node name="PatrolLoopB" type="Path2D" parent="Regions/RegionLeft/Paths" parent_id_path=PackedInt32Array(2098905846, 359844037) index="1" unique_id=890546549]
 curve = SubResource("Curve2D_left_b")
 
-[node name="PatrolLoopC" type="Path2D" parent="Regions/RegionLeft/Paths" parent_id_path=PackedInt32Array(2098905846, 359844037) index="2"]
+[node name="PatrolLoopC" type="Path2D" parent="Regions/RegionLeft/Paths" parent_id_path=PackedInt32Array(2098905846, 359844037) index="2" unique_id=583752021]
 curve = SubResource("Curve2D_left_c")
 
 [node name="RegionBottom" parent="Regions" unique_id=93040754 instance=ExtResource("9_region_gate")]
 
-[node name="TrueBoundary" parent="Regions/RegionBottom/Cover" parent_id_path=PackedInt32Array(93040754, 1067777465) index="0" unique_id=1453770287]
+[node name="Cover" parent="Regions/RegionBottom" index="0" unique_id=1067777465]
+visible = false
+
+[node name="TrueBoundary" parent="Regions/RegionBottom/Cover" index="0" unique_id=1453770287]
 polygon = PackedVector2Array(0, 2650, 700, 2700, 1780, 1515, 2500, 2000, 3524, 3106, 0, 3106)
 
 [node name="FogLayerA" parent="Regions/RegionBottom/Cover/TrueBoundary" index="0" unique_id=1006481259]
@@ -177,7 +192,7 @@ offset_top = 1455.0
 offset_right = 3584.0
 offset_bottom = 3166.0
 
-[node name="ExpandedBoundary" parent="Regions/RegionBottom/Cover" parent_id_path=PackedInt32Array(93040754, 1067777465) index="1" unique_id=2142029125]
+[node name="ExpandedBoundary" parent="Regions/RegionBottom/Cover" index="1" unique_id=2142029125]
 polygon = PackedVector2Array(-267, 2820, 538, 2878, 1780, 1515, 2608, 2073, 3786, 3345, -267, 3345)
 
 [node name="FogLayerB" parent="Regions/RegionBottom/Cover/ExpandedBoundary" index="0" unique_id=1938574201]
@@ -186,21 +201,27 @@ offset_top = 1455.0
 offset_right = 3846.0
 offset_bottom = 3405.0
 
-[node name="Boundary" parent="Regions/RegionBottom/Walls" parent_id_path=PackedInt32Array(93040754, 464603622) index="0" unique_id=1805443851]
+[node name="Walls" parent="Regions/RegionBottom" index="1" unique_id=464603622]
+visible = false
+
+[node name="Boundary" parent="Regions/RegionBottom/Walls" index="0" unique_id=1805443851]
 polygon = PackedVector2Array(0, 2650, 700, 2700, 1780, 1515, 2500, 2000, 3524, 3106, 0, 3106)
 
-[node name="PatrolLoopA" type="Path2D" parent="Regions/RegionBottom/Paths" parent_id_path=PackedInt32Array(93040754, 359844037) index="0"]
+[node name="PatrolLoopA" type="Path2D" parent="Regions/RegionBottom/Paths" parent_id_path=PackedInt32Array(93040754, 359844037) index="0" unique_id=309324947]
 curve = SubResource("Curve2D_bottom_a")
 
-[node name="PatrolLoopB" type="Path2D" parent="Regions/RegionBottom/Paths" parent_id_path=PackedInt32Array(93040754, 359844037) index="1"]
+[node name="PatrolLoopB" type="Path2D" parent="Regions/RegionBottom/Paths" parent_id_path=PackedInt32Array(93040754, 359844037) index="1" unique_id=2113644494]
 curve = SubResource("Curve2D_bottom_b")
 
-[node name="PatrolLoopC" type="Path2D" parent="Regions/RegionBottom/Paths" parent_id_path=PackedInt32Array(93040754, 359844037) index="2"]
+[node name="PatrolLoopC" type="Path2D" parent="Regions/RegionBottom/Paths" parent_id_path=PackedInt32Array(93040754, 359844037) index="2" unique_id=317712413]
 curve = SubResource("Curve2D_bottom_c")
 
 [node name="RegionRight" parent="Regions" unique_id=1090916515 instance=ExtResource("9_region_gate")]
 
-[node name="TrueBoundary" parent="Regions/RegionRight/Cover" parent_id_path=PackedInt32Array(1090916515, 1067777465) index="0" unique_id=1453770287]
+[node name="Cover" parent="Regions/RegionRight" index="0" unique_id=1067777465]
+visible = false
+
+[node name="TrueBoundary" parent="Regions/RegionRight/Cover" index="0" unique_id=1453770287]
 polygon = PackedVector2Array(3524, 0, 2900, 700, 1780, 1515, 2500, 2000, 3524, 3106)
 
 [node name="FogLayerA" parent="Regions/RegionRight/Cover/TrueBoundary" index="0" unique_id=1006481259]
@@ -209,7 +230,7 @@ offset_top = -60.0
 offset_right = 3584.0
 offset_bottom = 3166.0
 
-[node name="ExpandedBoundary" parent="Regions/RegionRight/Cover" parent_id_path=PackedInt32Array(1090916515, 1067777465) index="1" unique_id=2142029125]
+[node name="ExpandedBoundary" parent="Regions/RegionRight/Cover" index="1" unique_id=2142029125]
 polygon = PackedVector2Array(3786, -227, 2886, 407, 1780, 1515, 2608, 2073, 3786, 3345)
 
 [node name="FogLayerB" parent="Regions/RegionRight/Cover/ExpandedBoundary" index="0" unique_id=1938574201]
@@ -218,16 +239,19 @@ offset_top = -287.0
 offset_right = 3846.0
 offset_bottom = 3405.0
 
-[node name="Boundary" parent="Regions/RegionRight/Walls" parent_id_path=PackedInt32Array(1090916515, 464603622) index="0" unique_id=1805443851]
+[node name="Walls" parent="Regions/RegionRight" index="1" unique_id=464603622]
+visible = false
+
+[node name="Boundary" parent="Regions/RegionRight/Walls" index="0" unique_id=1805443851]
 polygon = PackedVector2Array(3524, 0, 2900, 700, 1780, 1515, 2500, 2000, 3524, 3106)
 
-[node name="PatrolLoopA" type="Path2D" parent="Regions/RegionRight/Paths" parent_id_path=PackedInt32Array(1090916515, 359844037) index="0"]
+[node name="PatrolLoopA" type="Path2D" parent="Regions/RegionRight/Paths" parent_id_path=PackedInt32Array(1090916515, 359844037) index="0" unique_id=1673082740]
 curve = SubResource("Curve2D_right_a")
 
-[node name="PatrolLoopB" type="Path2D" parent="Regions/RegionRight/Paths" parent_id_path=PackedInt32Array(1090916515, 359844037) index="1"]
+[node name="PatrolLoopB" type="Path2D" parent="Regions/RegionRight/Paths" parent_id_path=PackedInt32Array(1090916515, 359844037) index="1" unique_id=1396282058]
 curve = SubResource("Curve2D_right_b")
 
-[node name="PatrolLoopC" type="Path2D" parent="Regions/RegionRight/Paths" parent_id_path=PackedInt32Array(1090916515, 359844037) index="2"]
+[node name="PatrolLoopC" type="Path2D" parent="Regions/RegionRight/Paths" parent_id_path=PackedInt32Array(1090916515, 359844037) index="2" unique_id=2006722119]
 curve = SubResource("Curve2D_right_c")
 
 [node name="SpawnMarker" type="Marker2D" parent="." unique_id=1481769321]
@@ -241,15 +265,15 @@ position = Vector2(1900, 500)
 position = Vector2(3150, 300)
 data = ExtResource("8_kraken_data")
 
-[node name="Scylla" parent="FinalCreatures" instance=ExtResource("7_final_creature")]
+[node name="Scylla" parent="FinalCreatures" unique_id=1147160570 instance=ExtResource("7_final_creature")]
 position = Vector2(300, 1300)
 data = ExtResource("11_scylla_data")
 
-[node name="Umibozu" parent="FinalCreatures" instance=ExtResource("7_final_creature")]
+[node name="Umibozu" parent="FinalCreatures" unique_id=377125285 instance=ExtResource("7_final_creature")]
 position = Vector2(1780, 2800)
 data = ExtResource("12_umibozu_data")
 
-[node name="Leviathan" parent="FinalCreatures" instance=ExtResource("7_final_creature")]
+[node name="Leviathan" parent="FinalCreatures" unique_id=2035899067 instance=ExtResource("7_final_creature")]
 position = Vector2(3200, 1500)
 data = ExtResource("13_leviathan_data")
 
